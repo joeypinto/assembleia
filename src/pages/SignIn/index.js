@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import axios from './../../services/axios'
+import { unAuthenticatedAxiosInstance as axios } from './../../services/axios'
 
 class SignIn extends Component {
 
@@ -20,7 +20,7 @@ class SignIn extends Component {
     handleLogin = () => {
       axios.post("login", { ...this.state }).then(response => {
         console.log("login response is", response);
-        localStorage.setItem('authenticationToken', JSON.stringify(response.data.token));
+        localStorage.setItem('authenticationToken', response.data.token);
         this.props.history.push("/dashboard");
       }).catch(err => {
         console.error("error login", err);

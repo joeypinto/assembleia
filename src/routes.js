@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 
 //Pages
@@ -8,9 +8,11 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Cards from "./pages/Cards";
-import Charts from "./pages/Charts";
+import Logs from "./pages/Logs";
 import Tables from "./pages/Tables";
 import ParticipationRequest from "./pages/ParticipationRequest";
+import PresenceList from "./pages/PresenceList";
+import LiveConfiguration from "./pages/LiveConfiguration";
 
 
 const Routes = () => (
@@ -18,11 +20,13 @@ const Routes = () => (
         <Switch>
             <Route exact path="/" component={SignIn} />
             <Route exact path="/dashboard" component={Dashboard} />
+            <Route path="/logs" component={Logs} />
+            <Route path="/participacoes" component={ParticipationRequest} />
+            <Route path="/lista-de-presenca" component={PresenceList} />
+            <Route path="/live" component={LiveConfiguration} />
             <Route path="/signup" component={SignUp} />
             <Route path="/cards" component={Cards} />
-            <Route path="/charts" component={Charts} />
             <Route path="/tables" component={Tables} />
-            <Route path="/participacoes" component={ParticipationRequest} />
             <Route path="*" component={NotFound} />
         </Switch>
     </BrowserRouter>

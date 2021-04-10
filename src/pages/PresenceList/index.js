@@ -1956,7 +1956,7 @@ const data = [
     }
   ];
   
-class Dashboard extends Component {
+class PresenceList extends Component {
   componentWillMount() {
     document.getElementById('body').className = 'page-top'
   }
@@ -1986,14 +1986,14 @@ class Dashboard extends Component {
 
                 {/* <!-- Page Heading --> */}
 
-                <PageHeading title="Dashboard" />
+                <PageHeading title="Lista de presença" subtitle="Lista de presença dos associados que entraram para ver a transmissão" />
 
                 {/* <!-- Content Row --> */}
                 <div className="row">
                     <div className="col-xl-12">
-                        <CardBasic title="Area Chart">
+                        <CardBasic title="Lista de presença">
                             <DataTable
-                                title="Movie List"
+                                title="Lista de presença"
                                 columns={columns}
                                 data={data}
                                 pagination
@@ -2032,4 +2032,4 @@ class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default PresenceList;
