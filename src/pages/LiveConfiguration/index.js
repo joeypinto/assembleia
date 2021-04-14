@@ -12,6 +12,8 @@ import PageHeading from '../../components/PageHeading';
 import VideoEmbed from '../../components/VideoEmbed';
 import axios from '../../services/axios';
 
+import Swal from 'sweetalert2'
+
 class LiveConfiguration extends Component {
 
 	constructor(props) {
@@ -36,20 +38,29 @@ class LiveConfiguration extends Component {
 		})
 	}
 
-	handleCreateLive = () => {
+	handleCreateLive = async () => {
 		axios.post('admin/live', { url: this.state.url, user_id: this.state.user_id}).then(success => {
-			alert('Live configurada com sucesso');
-
 			this.setState({
 				actualTransmission: {
 					url: this.state.url
 				},
 				url: ''
 			})
+
+			Swal.fire({
+				icon: 'success',
+				title: 'Sucesso',
+				text: 'Link da transmissão alterado com sucesso',
+			  })
 		}).catch(error => {
 			console.log(error)
 			console.log(error.message)
-			alert('Erro ao configurar a live')
+			
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Erro ao alterar o link da live'
+			})
 		})
 		
 	}
