@@ -15,6 +15,9 @@ import PresenceList from "./pages/PresenceList";
 import LiveConfiguration from "./pages/LiveConfiguration";
 
 
+//TODO: study https://javascript.plainenglish.io/how-to-set-up-protected-routes-in-your-react-application-a3254deda380
+//TODO: study https://reactrouter.com/web/example/auth-workflow
+
 const Routes = () => (
     <BrowserRouter>
         <Switch>
