@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import Swal from 'sweetalert2'
 
-import "bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap"
+import "bootstrap/dist/css/bootstrap.min.css"
 
 import axios from './../../services/axios'
 
 //Navigation
-import Sidebar from '../../components/Navigation/Sidebar';
-import Topbar from '../../components/Navigation/Topbar';
+import Sidebar from '../../components/Navigation/Sidebar'
+import Topbar from '../../components/Navigation/Topbar'
 
-import CardBasic from '../../components/Cards/Basic';
-import PageHeading from '../../components/PageHeading';
+import CardBasic from '../../components/Cards/Basic'
+import PageHeading from '../../components/PageHeading'
+import { data } from 'jquery'
 
 class Dashboard extends Component {
 
@@ -36,16 +38,15 @@ class Dashboard extends Component {
 
 	renderRow(data) {
 		console.log(data);
+		let status = null
 
-		let status = null;
-
-		if(data.status === 0 && data.link != null) {
+		if(data.status === 1 && data.link != null) {
 			status = <td colSpan={3} style={{ textAlign: 'center', color: '#1cc88a', fontWeight: 'bold' }}>Aprovado</td>
-		} else if (data.status === 1) {
-			status = <div>
+		} else if (data.status === 1 && data.link == null) {
+			status = <>
 				<td>Pendente</td>
 				<td>
-					<button className="btn btn-success btn-icon-split">
+					<button onClick={() => this.handleAcceptStatus(data)} className="btn btn-success btn-icon-split">
 						<span className="icon text-white-50">
 							<i className="fas fa-check"></i>
 						</span>
@@ -53,61 +54,91 @@ class Dashboard extends Component {
 					</button>
 				</td>
 				<td>
-					<button className="btn btn-danger btn-icon-split">
+					<button onClick={() => this.handleRejectStatus(data)} className="btn btn-danger btn-icon-split">
 						<span className="icon text-white-50">
 							<i className="fas fa-trash"></i>
 						</span>
 						<span className="text">Rejeitar</span>
 					</button>
 				</td>
-			</div>
+			</>
 			
 		} else {
 			status = <td colSpan={3} style={{ textAlign: 'center', color: '#e74a3b', fontWeight: 'bold' }}>Reprovado</td>
 		}
 
 		return (
-			<tr key={data.id}>
-				<td>27</td>
-				<td><b>{data.name}</b> solicitou acesso</td>
+			<tr key={data.participationId}>
+				<td>{ data.participationId }</td>
+				<td><b>{ data.name }</b> solicitou acesso</td>
 				{ status }
 			</tr>
 		)
 	}
 
+	handleAcceptStatus = async (data) => {
+		const { value: url } = await Swal.fire({
+			input: 'url',
+			inputLabel: `Digite o link da live para o associado ${data.name}`,
+			inputPlaceholder: 'Link',
+			validationMessage: 'O link digitado está incorreto'
+		})
+
+		if (url) {
+			axios.post('admin/change-invitation-status', {
+				link: url,
+				status: 1,
+				id: data.participationId
+			}).then(() => {
+				this.updateRequestsState(data.participationId, 1, url)
+			}).catch(err => {
+				console.log(err);
+
+				Swal.fire("Erro", "Erro ao alterar status", "error")
+			})
+		}
+	}
+
+	handleRejectStatus = (data) => {
+		axios.post('admin/change-invitation-status', {
+			link: null,
+			status: 0,
+			id: data.participationId
+		}).then(() => {
+			this.updateRequestsState(data.participationId)
+		}).catch(err => {
+			console.log(err);
+
+			Swal.fire("Erro", "Erro ao alterar status", "error")
+		})
+	}
+
+	updateRequestsState = (participationId, status = 0, url = null) => {
+		var { requests } = this.state
+		var index = requests.findIndex(e => e.participationId === participationId)
+		requests[index].link = url
+		requests[index].status = status
+
+		this.setState({
+			requests: requests
+		})
+	}
+
 	render() {
 		return (
 			<div>
-				{/* <!-- Page Wrapper --> */}
 				<div id="wrapper">
-
-					{/* <!-- Sidebar --> */}
 					<Sidebar />
-					{/* <!-- End of Sidebar --> */}
-
-					{/* <!-- Content Wrapper --> */}
 					<div id="content-wrapper" className="d-flex flex-column">
-
-						{/* <!-- Main Content --> */}
 						<div id="content">
-
-							{/* <!-- Topbar --> */}
 							<Topbar />
-							{/* <!-- End of Topbar --> */}
-
-							{/* <!-- Begin Page Content --> */}
 							<div className="container-fluid">
-
-								{/* <!-- Page Heading --> */}
-
 								<PageHeading title="Solicitações para participar" subtitle="Aceite ou recuse as solicitações para participar da transmissão por aqui" />
-
-								{/* <!-- Content Row --> */}
 								<div className="row">
 									<div className="col-xl-12">
 										<CardBasic title="Solicitações de Participação">
 											<div className="table-responsive">
-												<table className="table table-bordered" width="100%" cellspacing="0">
+												<table className="table table-bordered" width="100%" cellSpacing="0">
 													<thead>
 														<tr>
 															<th>#</th>
@@ -134,14 +165,9 @@ class Dashboard extends Component {
 										</CardBasic>
 									</div>
 								</div>
-
 							</div>
-							{/* <!-- /.container-fluid --> */}
-
 						</div>
-						{/* <!-- End of Main Content --> */}
 
-						{/* <!-- Footer --> */}
 						<footer className="sticky-footer bg-white">
 							<div className="container my-auto">
 								<div className="copyright text-center my-auto">
@@ -149,15 +175,9 @@ class Dashboard extends Component {
 								</div>
 							</div>
 						</footer>
-						{/* <!-- End of Footer --> */}
-
 					</div>
-					{/* <!-- End of Content Wrapper --> */}
-
 				</div>
-				{/* <!-- End of Page Wrapper --> */}
 
-				{/* <!-- Scroll to Top Button--> */}
 				<a className="scroll-to-top rounded" href="#page-top">
 					<i className="fas fa-angle-up"></i>
 				</a>
