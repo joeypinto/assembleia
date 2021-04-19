@@ -12,7 +12,6 @@ import Topbar from '../../components/Navigation/Topbar'
 
 import CardBasic from '../../components/Cards/Basic'
 import PageHeading from '../../components/PageHeading'
-import { data } from 'jquery'
 
 class Dashboard extends Component {
 
