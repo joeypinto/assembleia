@@ -69,7 +69,8 @@ class Dashboard extends Component {
 		return (
 			<tr key={data.participationId}>
 				<td>{ data.participationId }</td>
-				<td><b>{ data.name }</b> solicitou acesso</td>
+				<td>{ data.name }</td>
+				<td>{ data.description }</td>
 				{ status }
 			</tr>
 		)
@@ -142,6 +143,7 @@ class Dashboard extends Component {
 														<tr>
 															<th>#</th>
 															<th>Nome</th>
+															<th>Motivo</th>
 															<th>Status</th>
 															<th>Aceitar</th>
 															<th>Rejeitar</th>
@@ -151,6 +153,7 @@ class Dashboard extends Component {
 														<tr>
 															<th>#</th>
 															<th>Nome</th>
+															<th>Motivo</th>
 															<th>Status</th>
 															<th>Aceitar</th>
 															<th>Rejeitar</th>

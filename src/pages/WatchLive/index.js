@@ -21,14 +21,15 @@ class WatchLive extends Component {
         super(props)
 
         this.state = {
-            live: null
+            live: null,
+            user: User.getData()
         }
     }
 
     componentWillMount() {
         document.getElementById('body').className = 'page-top'
 
-        axios.get(`/associate/live?user_id=${User.getData().id}`).then(response => {
+        axios.get(`/associate/live?user_id=${this.state.user.id}`).then(response => {
             this.setState({
                 live: response.data.live
             })
@@ -63,11 +64,11 @@ class WatchLive extends Component {
             cancelButtonText: 'Cancelar',
             confirmButtonText: 'Confirmar',
             showLoaderOnConfirm: true,
-            preConfirm: async (participationText) => {
-                console.log('p text', participationText);
+            preConfirm: async (description) => {
                 try{
                     return await axios.post('/associate/invitation', {
-                        user_id: User.data.id
+                        user_id: this.state.user.id,
+                        description: description
                     })
                 } catch(e) {
                     console.log('erro na request', e);
