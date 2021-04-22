@@ -28,7 +28,7 @@ class WatchLive extends Component {
     componentWillMount() {
         document.getElementById('body').className = 'page-top'
 
-        axios.get(`/associate/live?user_id=${User.data.id}`).then(response => {
+        axios.get(`/associate/live?user_id=${User.getData().id}`).then(response => {
             this.setState({
                 live: response.data.live
             })
@@ -92,12 +92,14 @@ class WatchLive extends Component {
                             <Topbar />
 
                             <div className="row">
-                                <div className="col-xl-9 col-lg-8">
+                                <div className="col-xl-9 col-lg-8" style={{paddingRight: 0}}>
                                     { this.renderLive() }
                                 </div>
 
-                                <div className="col-xl-3 col-lg-4">
-                                    <button onClick={() => this.handleRequest()}>Pedir para participar</button>
+                                <div className="col-xl-3 col-lg-4" style={{paddingLeft: 0}}>
+                                    <CardBasic title="Chat">
+                                        <button onClick={() => this.handleRequest()}>Pedir para participar</button>
+                                    </CardBasic>
                                 </div>     
                             </div>
                         </div>

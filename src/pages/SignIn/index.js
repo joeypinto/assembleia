@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import User from '../../services/user';
 import { unAuthenticatedAxiosInstance as axios } from './../../services/axios'
 
 class SignIn extends Component {
@@ -20,10 +21,18 @@ class SignIn extends Component {
 	handleLogin = () => {
 		axios.post("login", { ...this.state }).then(response => {
 			console.log("login response is", response);
-			localStorage.setItem('authenticationToken', response.data.token);
-			this.props.history.push("/dashboard");
+			localStorage.setItem('authenticationToken', response.data.token)
+
+			let redirectRoute = "/watch"
+
+			if(User.resolveToken(response.data.token).tipo === 2) {
+				redirectRoute = "/dashboard"
+			}
+
+			this.props.history.push(redirectRoute)
+			
 		}).catch(err => {
-			console.error("error login", err);
+			console.error("error login", err)
 		});
 	}
 

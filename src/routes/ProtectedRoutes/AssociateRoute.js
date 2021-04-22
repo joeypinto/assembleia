@@ -2,7 +2,7 @@ import React from 'react'
 import { Redirect } from 'react-router-dom'
 import user from '../../services/user';
 
-class AdminRoute extends React.Component {
+class AssociateRoute extends React.Component {
 
     render() {
         const Component = this.props.component;
@@ -12,7 +12,7 @@ class AdminRoute extends React.Component {
         if(token){
             
             let decoded = user.resolveToken(token)
-            isAuthenticated = verifyAuthorizationField(decoded.id) && decoded.tipo === 2
+            isAuthenticated = verifyAuthorizationField(decoded.id) && decoded.tipo === 1
         }
 
         return isAuthenticated ? (
@@ -27,4 +27,4 @@ function verifyAuthorizationField(value){
     return value !== undefined && value !== ""
 }
 
-export default AdminRoute;
+export default AssociateRoute;

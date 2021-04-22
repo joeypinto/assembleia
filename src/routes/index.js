@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 //Routes Auth Handler
 import AdminRoute from "./ProtectedRoutes/AdminRoute";
+import AssociateRoute from "./ProtectedRoutes/AssociateRoute";
 
 //Pages
 import SignUp from "./../pages/SignUp";
@@ -33,7 +34,7 @@ const Routes = () => (
             <AdminRoute path="/signup" component={SignUp} />
             <AdminRoute path="/cards" component={Cards} />
             <AdminRoute path="/tables" component={Tables} />
-            <Route path="/watch" component={WatchLive} />
+            <AssociateRoute path="/watch" component={WatchLive} />
             <Route path="*" component={NotFound} />
         </Switch>
     </BrowserRouter>
