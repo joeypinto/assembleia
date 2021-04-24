@@ -47,6 +47,13 @@ class Sidebar extends Component {
 					</Link>
 				</li>
 
+				<li className="nav-item">
+					<Link className='nav-link' to="/enquete">
+						<i className="fas fa-fw fa-user-friends"></i>
+						<span>Enquetes</span>
+					</Link>
+				</li>
+
 				{/* <!-- Divider --> */}
 				<hr className="sidebar-divider" />
 

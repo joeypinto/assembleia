@@ -17,6 +17,8 @@ import ParticipationRequest from "./../pages/ParticipationRequest";
 import PresenceList from "./../pages/PresenceList";
 import LiveConfiguration from "./../pages/LiveConfiguration";
 import WatchLive from "./../pages/WatchLive";
+import NewResearch from "../pages/Research/New";
+import Research from "../pages/Research/Listagem";
 
 
 //TODO: study https://javascript.plainenglish.io/how-to-set-up-protected-routes-in-your-react-application-a3254deda380
@@ -31,10 +33,15 @@ const Routes = () => (
             <AdminRoute path="/participacoes" component={ParticipationRequest} />
             <AdminRoute path="/lista-de-presenca" component={PresenceList} />
             <AdminRoute path="/live" component={LiveConfiguration} />
+            <AdminRoute path="/enquete/novo" component={NewResearch} />
+            <AdminRoute path="/enquete" component={Research} />
+            <AssociateRoute path="/watch" component={WatchLive} />
+
+            {/* Modelos de pagina */}
             <AdminRoute path="/signup" component={SignUp} />
             <AdminRoute path="/cards" component={Cards} />
             <AdminRoute path="/tables" component={Tables} />
-            <AssociateRoute path="/watch" component={WatchLive} />
+            
             <Route path="*" component={NotFound} />
         </Switch>
     </BrowserRouter>

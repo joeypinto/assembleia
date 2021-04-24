@@ -4,12 +4,10 @@ import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 //Navigation
-import Sidebar from '../../components/Navigation/Sidebar';
 import Topbar from '../../components/Navigation/Topbar';
 
 
 import CardBasic from '../../components/Cards/Basic';
-import PageHeading from '../../components/PageHeading';
 import VideoEmbed from '../../components/VideoEmbed';
 import User from '../../services/user';
 import axios from '../../services/axios';
