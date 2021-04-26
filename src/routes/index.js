@@ -18,6 +18,7 @@ import PresenceList from "./../pages/PresenceList";
 import LiveConfiguration from "./../pages/LiveConfiguration";
 import WatchLive from "./../pages/WatchLive";
 import NewResearch from "../pages/Research/New";
+import DetailResearch from "../pages/Research/Details";
 import Research from "../pages/Research/Listagem";
 
 
@@ -33,6 +34,7 @@ const Routes = () => (
             <AdminRoute path="/participacoes" component={ParticipationRequest} />
             <AdminRoute path="/lista-de-presenca" component={PresenceList} />
             <AdminRoute path="/live" component={LiveConfiguration} />
+            <AdminRoute path="/enquete/:id" component={DetailResearch} />
             <AdminRoute path="/enquete/novo" component={NewResearch} />
             <AdminRoute path="/enquete" component={Research} />
             <AssociateRoute path="/watch" component={WatchLive} />

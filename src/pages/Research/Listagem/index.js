@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
+import Swal from 'sweetalert2';
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,28 +14,94 @@ import Topbar from '../../../components/Navigation/Topbar';
 
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
-import Swal from 'sweetalert2';
+import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
 
-const columns = [
-    {
-        name: "#",
-        selector: "id",
-        sortable: true
-    },
-    {
-        name: "Título",
-        selector: "name",
-        sortable: true
-    }
-]
 
 class Research extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            rowsChange: false,
             researches: []
         }
+    }
+
+    columns = [
+        {
+            name: "#",
+            selector: "id",
+            sortable: true
+        },
+        {
+            name: "Título",
+            selector: "name",
+            sortable: true
+        },
+        {
+            name: 'Data e Hora',
+            selector: 'created_at',
+            sortable: true,
+            cell: (row) => convertUTCDateTimeToBrazilianDateTime(row.created_at)
+        },
+        {
+            name: 'Status',
+            selector: 'status',
+            cell: (row) => {
+                if(row.status === 1){
+                    return 'Ativado'
+                }
+    
+                return 'Desativado'
+            }
+        },
+        {
+            name: 'Alterar Status',
+            cell: (row) => {
+                if(row.status === 0){
+                    return <button className="btn btn-success"  onClick={() => this.handleUpdateStatus(row.id, 1)}>Ativar</button>
+                }
+    
+                return <button className="btn btn-danger" onClick={() => this.handleUpdateStatus(row.id, 0)}>Desativar</button>
+            }
+        }, 
+        {
+            name: 'Visualizar',
+            cell: (row) => {
+                return <button className="btn btn-primary" onClick={() => this.handleDetails(row)}>Visualizar</button>
+            }
+        }
+    ]
+
+    handleDetails(row) {
+        console.log(row)
+
+        this.props.history.push({
+            pathname: `/enquete/${row.id}`,
+            state: { research: row }
+        })
+    }
+    
+    handleUpdateStatus(researchId, status) {
+        axios.put('/admin/research', {
+            id: researchId,
+            status: status
+        }).then(() => {
+            var { researches } = this.state
+
+            const index = researches.findIndex(e => e.id === researchId)
+
+            researches[index].status = status
+
+            this.setState({
+                rowsChange: !this.state.rowsChange,
+                researches: researches
+            })
+
+            Swal.fire('Sucesso', 'O status foi alterado com sucesso', 'success')
+        }).catch(() => {
+            Swal.fire('Erro', 'Erro ao alterar o status da enquete', 'error')
+        })
     }
     
     componentWillMount() {
@@ -61,6 +128,9 @@ class Research extends Component {
     }
 
     render() {
+
+        const { researches, rowsChange } = this.state
+
         return (
             <div>
                 <div id="wrapper">
@@ -77,9 +147,13 @@ class Research extends Component {
                                         <CardBasic title="Listagem de Enquetes">
                                             <button onClick={() => this.redirectToNew()} className="btn btn-success">Adicionar Enquete</button>
                                             <DataTable
-                                                columns={columns}
-                                                data={this.state.researches}
+                                                columns={this.columns}
+                                                data={researches}
                                                 pagination
+
+                                                onSelectedRowsChange={rowsChange}
+                                                Selected={rowsChange}
+                                                clearSelectedRows={rowsChange}
                                             />
                                         </CardBasic>
                                     </div>

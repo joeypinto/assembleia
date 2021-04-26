@@ -13,6 +13,8 @@ import Topbar from '../../components/Navigation/Topbar'
 import CardBasic from '../../components/Cards/Basic'
 import PageHeading from '../../components/PageHeading'
 
+import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
+
 class Dashboard extends Component {
 
 	constructor(props) {
@@ -36,7 +38,6 @@ class Dashboard extends Component {
 	}
 
 	renderRow(data) {
-		console.log(data);
 		let status = null
 
 		if(data.status === 1 && data.link != null) {
@@ -71,6 +72,7 @@ class Dashboard extends Component {
 				<td>{ data.participationId }</td>
 				<td>{ data.name }</td>
 				<td>{ data.description }</td>
+				<td>{ convertUTCDateTimeToBrazilianDateTime(data.created_at) }</td>
 				{ status }
 			</tr>
 		)
@@ -144,6 +146,7 @@ class Dashboard extends Component {
 															<th>#</th>
 															<th>Nome</th>
 															<th>Motivo</th>
+															<th>Data e Hora</th>
 															<th>Status</th>
 															<th>Aceitar</th>
 															<th>Rejeitar</th>
@@ -154,6 +157,7 @@ class Dashboard extends Component {
 															<th>#</th>
 															<th>Nome</th>
 															<th>Motivo</th>
+															<th>Data e Hora</th>
 															<th>Status</th>
 															<th>Aceitar</th>
 															<th>Rejeitar</th>
