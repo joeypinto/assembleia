@@ -21,19 +21,54 @@ class Dashboard extends Component {
 		super(props);
 
 		this.state = {
-			requests: []
+			requests: [],
+			offset: 0
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
+
+		var intervalId = setInterval(() => {
+			axios.get(`admin/list-invitations?min=${this.state.offset}`).then((response) => {
+				console.log(response.data.participations)
+				var partLength = response.data.participations.length
+
+				if(partLength > 0){
+					var { requests } = this.state
+					var responseRequests = response.data.participations
+					var offset = responseRequests[0].participationId
+					
+					requests = responseRequests.concat(requests)
+
+					this.setState({
+						requests: requests,
+						offset: offset
+					})
+				}
+			})
+		}, 2500)
+
+		// store intervalId in the state so it can be accessed later:
+		this.setState({intervalId: intervalId})
 	}
 
-	componentDidMount() {
-		axios.get('admin/list-invitations?min=0').then((response) => {
-			this.setState({
-				requests: response.data.participations
-			})
+	componentWillUnmount() {
+		// use intervalId from the state to clear the interval
+		clearInterval(this.state.intervalId);
+	 }
+
+	timer(state) {
+		console.log(state)
+		axios.get(`admin/list-invitations?min=0`).then((response) => {
+			console.log('participations', response.data.participations)
+			var partLength = response.data.participations.length
+			if(partLength > 0){
+				this.setState({
+					requests: response.data.participations,
+					offset: response.data.participations[partLength - 1].id
+				})
+			}
 		})
 	}
 
