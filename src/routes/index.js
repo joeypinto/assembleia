@@ -34,8 +34,8 @@ const Routes = () => (
             <AdminRoute path="/participacoes" component={ParticipationRequest} />
             <AdminRoute path="/lista-de-presenca" component={PresenceList} />
             <AdminRoute path="/live" component={LiveConfiguration} />
-            <AdminRoute path="/enquete/:id" component={DetailResearch} />
             <AdminRoute path="/enquete/novo" component={NewResearch} />
+            <AdminRoute path="/enquete/:id" component={DetailResearch} />
             <AdminRoute path="/enquete" component={Research} />
             <AssociateRoute path="/watch" component={WatchLive} />
 
