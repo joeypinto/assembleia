@@ -20,7 +20,8 @@ class WatchLive extends Component {
 
         this.state = {
             live: null,
-            user: User.getData()
+            user: User.getData(),
+            messages: []
         }
     }
 
@@ -40,14 +41,32 @@ class WatchLive extends Component {
 
     componentDidMount() {
         document.getElementsByTagName('nav')[0].classList.remove('mb-4')
+
+        var userId = this.state.user.id
+
+        var intervalId = setInterval(() => {
+            axios.get(`associate/invitation?user_id=${userId}`).then((response) => {
+				if(response.data.participation){
+                    var { messages } = this.state
+                    
+                    messages.push({
+                        type: "participation_accepted",
+                        data: response.data.participation
+                    })
+
+                    this.setState({
+                        messages: messages
+                    })
+                }
+			})
+        }, 30000)
+
+        this.setState({intervalId: intervalId})
     }
 
-    renderLive() {
-        if(this.state.live){
-            return <VideoEmbed src={this.state.live.url} width="100%"/>
-        }
-        
-        return null
+    componentWillUnmount() {
+        // use intervalId from the state to clear the interval
+        clearInterval(this.state.intervalId);   
     }
 
     handleRequest = () => {
@@ -82,6 +101,30 @@ class WatchLive extends Component {
         })
     }
 
+    renderLive() {
+        if(this.state.live){
+            return <VideoEmbed src={this.state.live.url} width="100%"/>
+        }
+        
+        return null
+    }
+
+    renderMessages() {
+        var messagesBuffer = []
+        
+        this.state.messages.map(message => {
+            if(message.type === 'participation_accepted'){
+                messagesBuffer.push(
+                    <div>
+                        <strong>Admin: </strong> <a href={message.data.link} target="blank">sua solicitação para participar da transmissão foi aceita, clique aqui para entrar</a>
+                    </div>
+                )
+            }
+        })
+        
+        return messagesBuffer
+    }
+
     render() {
         return (
             <div>
@@ -97,7 +140,11 @@ class WatchLive extends Component {
 
                                 <div className="col-xl-3 col-lg-4" style={{paddingLeft: 0}}>
                                     <CardBasic title="Chat">
-                                        <button onClick={() => this.handleRequest()}>Pedir para participar</button>
+                                        <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
+
+                                        <hr/>
+
+                                        { this.renderMessages() }
                                     </CardBasic>
                                 </div>     
                             </div>
