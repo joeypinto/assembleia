@@ -13,6 +13,8 @@ import User from '../../services/user';
 import axios from '../../services/axios';
 import Swal from 'sweetalert2';
 
+const invitationInterval = 60000
+
 class WatchLive extends Component {
 
     constructor(props) {
@@ -59,14 +61,90 @@ class WatchLive extends Component {
                     })
                 }
 			})
-        }, 30000)
+        }, invitationInterval)
+
+        this.addResearchMock()
 
         this.setState({intervalId: intervalId})
     }
 
+    addResearchMock() {
+        var mock = {
+            "id": 67,
+            "name": "Pesquisa de Satisfação",
+            "status": 1,
+            "created_at": "2021-03-25T21:37:47.000Z",
+            "questions": [
+                {
+                    "id": 105,
+                    "type": "radio",
+                    "title": "Baseado nas suas experiências escolha",
+                    "text": "aqui pode textão",
+                    "required": 1,
+                    "options": [
+                        {
+                            "id": 33,
+                            "text": "A"
+                        },
+                        {
+                            "id": 34,
+                            "text": "B"
+                        },
+                        {
+                            "id": 35,
+                            "text": "C"
+                        },
+                        {
+                            "id": 36,
+                            "text": "D"
+                        }
+                    ]
+                },
+                {
+                    "id": 106,
+                    "type": "text",
+                    "title": "Descreva com palavras",
+                    "text": "",
+                    "required": 1
+                },
+                {
+                    "id": 107,
+                    "type": "checkbox",
+                    "title": "Escolha mais de uma opção a seu desejo",
+                    "text": "",
+                    "required": 0,
+                    "options": [
+                        {
+                            "id": 37,
+                            "text": "A"
+                        },
+                        {
+                            "id": 38,
+                            "text": "B"
+                        },
+                        {
+                            "id": 39,
+                            "text": "C"
+                        },
+                        {
+                            "id": 40,
+                            "text": "D"
+                        }
+                    ]
+                }
+            ]
+        }
+
+        var { messages } = this.state
+
+        messages.push({
+            type: "new_research",
+            data: mock
+        })
+    }
+
     componentWillUnmount() {
-        // use intervalId from the state to clear the interval
-        clearInterval(this.state.intervalId);   
+        clearInterval(this.state.intervalId)
     }
 
     handleRequest = () => {
@@ -112,7 +190,7 @@ class WatchLive extends Component {
     renderMessages() {
         var messagesBuffer = []
         
-        this.state.messages.map(message => {
+        this.state.messages.forEach(message => {
             if(message.type === 'participation_accepted'){
                 messagesBuffer.push(
                     <div>
@@ -120,9 +198,87 @@ class WatchLive extends Component {
                     </div>
                 )
             }
+
+            if(message.type === 'new_research'){
+                const research = message.data
+                const userId = this.state.user.id
+                
+                var questionsBuffer = []
+                research.questions.forEach((question, i) => {
+                
+                    //answers types ifs and renders
+                    var answersBuffer = []
+                    if(question.type === "text") {
+                        answersBuffer.push(
+                            <textarea name="text[]" required={question.required}></textarea>
+                        )
+                    } else if(question.type === "radio") {
+                        //options for the current question looping
+                        question.options.forEach(option => {
+                            answersBuffer.push(
+                                <div>
+                                    <label>
+                                        <input name="research_question_option_id[]" type="radio" value={ option.id } required={question.required} /> { option.text }
+                                    </label>
+                                </div>
+                            )
+                        })
+                    } else if (question.type === "checkbox") {
+                        question.options.forEach(option => {
+                            answersBuffer.push(
+                                <div>
+                                    <label>
+                                        <input name="research_question_option_id[]" type="checkbox" value={ option.id } /> { option.text }
+                                    </label>
+                                </div>
+                            )
+                        })
+                    }
+
+                    //questions render block
+                    questionsBuffer.push(
+                        <div>
+                            <strong>{ i + 1 }</strong>. { question.title }
+                            <p>{ question.text }</p>
+
+                            { answersBuffer }
+                            <input type="hidden" name="research_question_id[]" value={question.id} />
+                            <input type="hidden" name="research_id[]" value={research.id} />
+                            <input type="hidden" name="user_id[]" value={userId} />
+                        </div>
+                    )
+                })
+
+                //research block render
+                messagesBuffer.push(
+                    <form action="#" id={research.id}>
+                        <h1>{ research.name }</h1>
+
+                        { questionsBuffer }
+
+                        <button type="submit" onClick={ (e) => this.handleFormSubmit(e, research) }>Go</button>
+                        <hr />
+                    </form>
+                )
+            }
         })
         
         return messagesBuffer
+    }
+
+    handleFormSubmit(e, research){
+        e.preventDefault()
+
+        var form = document.getElementById(research.id);
+        var formStatus = form.checkValidity();
+        form.reportValidity();
+
+        if(!formStatus){
+            Swal.fire("Informação Pendentes", "Preencha corretamente as informações do formulário antes de prosseguir", "warning")
+            return
+        }
+
+        console.log("form status ", formStatus)
     }
 
     render() {
