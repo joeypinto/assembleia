@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import $ from 'jquery';
+
 //Navigation
 import Topbar from '../../components/Navigation/Topbar';
 
@@ -190,10 +192,10 @@ class WatchLive extends Component {
     renderMessages() {
         var messagesBuffer = []
         
-        this.state.messages.forEach(message => {
+        this.state.messages.forEach((message, i) => {
             if(message.type === 'participation_accepted'){
                 messagesBuffer.push(
-                    <div>
+                    <div key={i}>
                         <strong>Admin: </strong> <a href={message.data.link} target="blank">sua solicitação para participar da transmissão foi aceita, clique aqui para entrar</a>
                     </div>
                 )
@@ -210,15 +212,16 @@ class WatchLive extends Component {
                     var answersBuffer = []
                     if(question.type === "text") {
                         answersBuffer.push(
-                            <textarea name="text[]" required={question.required}></textarea>
+                            <div>
+                                <textarea name={`text[${i}]`}required={question.required}></textarea>
+                            </div>
                         )
                     } else if(question.type === "radio") {
-                        //options for the current question looping
                         question.options.forEach(option => {
                             answersBuffer.push(
-                                <div>
+                                <div key={option.id}>
                                     <label>
-                                        <input name="research_question_option_id[]" type="radio" value={ option.id } required={question.required} /> { option.text }
+                                        <input name={`research_question_option_id[${i}]`} data-index={i} type="radio" value={ option.id } required={question.required} /> { option.text }
                                     </label>
                                 </div>
                             )
@@ -226,9 +229,9 @@ class WatchLive extends Component {
                     } else if (question.type === "checkbox") {
                         question.options.forEach(option => {
                             answersBuffer.push(
-                                <div>
+                                <div key={option.id}>
                                     <label>
-                                        <input name="research_question_option_id[]" type="checkbox" value={ option.id } /> { option.text }
+                                        <input name={`research_question_option_id[${i}]`} data-index={i} type="checkbox" value={ option.id } /> { option.text }
                                     </label>
                                 </div>
                             )
@@ -237,21 +240,21 @@ class WatchLive extends Component {
 
                     //questions render block
                     questionsBuffer.push(
-                        <div>
+                        <div key={question.id}>
                             <strong>{ i + 1 }</strong>. { question.title }
                             <p>{ question.text }</p>
 
                             { answersBuffer }
-                            <input type="hidden" name="research_question_id[]" value={question.id} />
-                            <input type="hidden" name="research_id[]" value={research.id} />
-                            <input type="hidden" name="user_id[]" value={userId} />
+                            <input type="hidden" name={`research_id[${i}]`} value={research.id} />
+                            <input type="hidden" name={`user_id[${i}]`} value={userId} />
+                            <input type="hidden" name={`research_question_id[${i}]`} value={question.id} />
                         </div>
                     )
                 })
 
                 //research block render
                 messagesBuffer.push(
-                    <form action="#" id={research.id}>
+                    <form id={research.id} key={i}>
                         <h1>{ research.name }</h1>
 
                         { questionsBuffer }
@@ -271,14 +274,53 @@ class WatchLive extends Component {
 
         var form = document.getElementById(research.id);
         var formStatus = form.checkValidity();
-        form.reportValidity();
+        form.reportValidity()
 
         if(!formStatus){
-            Swal.fire("Informação Pendentes", "Preencha corretamente as informações do formulário antes de prosseguir", "warning")
+            //Swal.fire("Informação Pendentes", "Preencha corretamente as informações do formulário antes de prosseguir", "warning")
+            
             return
         }
 
-        console.log("form status ", formStatus)
+        var answersArray = []
+
+        $(`#${research.id}`).serializeArray().forEach(item => {
+            //discover the index of the question
+            var index = item.name.match(/(?<=\[).*?(?=\])/g)
+
+            //if not created, create the index in the answersArray array
+            if(!answersArray[index]){
+                answersArray[index] = {}
+            }
+
+            //remove [?] from the name
+            var itemName = item.name.replace(/(?<=\[).*?(?=\])/gi, "").replace("[]", "")
+            var itemValue = item.value
+
+            if(itemName === 'research_question_option_id') {
+                var checkedBoxes = $('input[data-index="'+index+'"]:checked')
+        
+                if(checkedBoxes.length > 1){
+                    var values = []
+                    
+                    checkedBoxes.each(function(){                    
+                        values.push($(this).val())
+                    })
+
+                    itemValue = values
+                }
+            }
+
+            answersArray[index][itemName] = itemValue
+        })
+
+        console.log("answers is", answersArray)
+
+        var filtered = answersArray.filter(function (el) {
+            return el != null;
+        });
+
+    //     console.log("stgringified and filtered now", filtered, JSON.stringify(filtered))
     }
 
     render() {
