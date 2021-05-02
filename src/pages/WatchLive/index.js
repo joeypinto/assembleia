@@ -314,13 +314,22 @@ class WatchLive extends Component {
             answersArray[index][itemName] = itemValue
         })
 
-        console.log("answers is", answersArray)
+        answersArray.forEach((answer, i) => {
+            if(Array.isArray(answer.research_question_option_id)) {
+
+                answer.research_question_option_id.forEach(option => {
+                    answersArray.push({...answer, research_question_option_id: option})
+                })
+
+                answersArray[i] = null
+            }
+        })
 
         var filtered = answersArray.filter(function (el) {
             return el != null;
         });
 
-    //     console.log("stgringified and filtered now", filtered, JSON.stringify(filtered))
+        console.log("stgringified and filtered now", filtered, JSON.stringify(filtered))
     }
 
     render() {
