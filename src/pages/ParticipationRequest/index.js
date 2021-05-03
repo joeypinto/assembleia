@@ -75,7 +75,7 @@ class Dashboard extends Component {
 	renderRow(data) {
 		let status = null
 
-		if(data.status === 1 && data.link != null) {
+		if(data.link != null) {
 			status = <td colSpan={3} style={{ textAlign: 'center', color: '#1cc88a', fontWeight: 'bold' }}>Aprovado</td>
 		} else if (data.status === 1 && data.link == null) {
 			status = <>
