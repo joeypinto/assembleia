@@ -10,7 +10,7 @@ import Topbar from '../../../components/Navigation/Topbar'
 
 import CardBasic from '../../../components/Cards/Basic'
 import PageHeading from '../../../components/PageHeading'
-import axios from 'axios';
+import axios from '../../../services/axios';
 
 class DetailResearch extends Component {
     constructor(props) {
@@ -44,72 +44,64 @@ class DetailResearch extends Component {
         document.getElementById('body').className = 'page-top'
 
         const { match: { params } } = this.props;
-        console.log("params", params)
 
-        // let { id } = useParams()
+        axios.get(`/admin/research/results?id=${params.id}`).then(response => {
+            var { research } = this.state
+            response.data.alternatives?.forEach(question => {
+                const questionIndex = research.questions.findIndex(e => e.id === question.research_question_id)
 
-        // axios.get()
+                research.questions[questionIndex].options = question.options
+            })
+
+            response.data.dissertation?.forEach(question => {
+                const questionIndex = research.questions.findIndex(e => e.id === question.research_question_id)
+
+                research.questions[questionIndex].dissertations = question.answers
+            })
+
+            console.log('research after manipulate', research)
+
+            this.setState({
+                answers: response.data,
+                research: research
+            })
+        })
+    }
+
+    renderTypeName(type){
+        switch (type){
+            case("radio"):
+                return "Múltipla Escolha"
+            case("text"):
+                return "Texto"
+            case("checkbox"):
+                return "Caixa de Checagem"
+            default:
+                return 
+        }
     }
 
     renderQuestions() {
         var questionsBuffer = []
         this.state.research.questions.map((question, i) => {
             questionsBuffer.push(
-                <div key={i}>
+                <div key={`question-${question.id}`}>
                     <h6 className="font-weight-bold text-primary">Questão {i+1}</h6>
-
-                    <div className="form-group">
-                        <input 
-                            type="text" 
-                            name="title"
-                            className="form-control"
-                            placeholder="Título da pergunta"
-                            value={question.title} 
-                            question={i}
-                            readOnly
-                        />
+                   
+                    <div>
+                        { question.title }
                     </div>
 
-                    <div className="form-group">
-                        <input 
-                            type="text" 
-                            name="text"
-                            className="form-control"
-                            placeholder="Descrição opcional"
-                            value={question.text} 
-                            question={i}
-                            readOnly
-                        />
+                    <p>
+                        { question.text }
+                    </p>
+
+                    <div>
+                        { this.renderTypeName(question.type) }
                     </div>
 
-                    <div className="form-group">
-                        <select
-                            name="type"
-                            className="form-control"
-                            value={question.type}
-                            question={i}
-                            readOnly
-                        >
-                            <option value="" disabled>Escolha o tipo</option>
-                            <option value="radio">Múltipla Escolha</option>
-                            <option value="text">Texto</option>
-                            <option value="checkbox">Caixa de Checagem</option>
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <div className="custom-control custom-checkbox small">
-                            <input 
-                                className="custom-control-input" 
-                                id={"questionCheck-"+i}
-                                type="checkbox" 
-                                name="required" 
-                                question={i}
-                                checked={question.required}
-                                disabled
-                            />
-                            <label className="custom-control-label" htmlFor={"questionCheck-"+i}>É obrigatório?</label>
-                        </div>
+                    <div>
+                        { question.required ? "Esta questão é obrigatória" : "Esta questão não é obrigatória" }
                     </div>
    
                     { this.renderOptions(question, i) }
@@ -138,29 +130,20 @@ class DetailResearch extends Component {
         })
     }
 
-    renderOptions(question, questionIterator) {
+    renderOptions(question) {
         var optionsBuffer = []
         optionsBuffer.push(
-            <h6 className="font-weight-bold text-primary">Opções</h6>
+            <h6 key="h6" className="font-weight-bold text-primary">Opções e Números de Votos</h6>
         )
 
         if(question.type === "radio" || question.type === "checkbox"){
-            console.log(question.options)
-            question.options.map((option, i) => {
+            question.options.map((option) => {
                 return optionsBuffer.push(
-                    <div key={i}>
+                    <div  key={`option-${option.id}`}>
                         <div className="form-group">
                             <div className="row">
                                 <div className="col-md-10">
-                                    <input 
-                                        className="form-control"
-                                        type="text" 
-                                        placeholder="Digite a opção"
-                                        value={option.text} 
-                                        question={questionIterator}
-                                        option={i}
-                                        readOnly
-                                    />
+                                    { option.text } { option.number_of_votes ? ` - ${option.number_of_votes} usuários escolheram essa opção` : '' }
                                 </div>
                             </div>
                         </div>

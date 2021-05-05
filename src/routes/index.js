@@ -47,9 +47,9 @@ const Routes = () => (
         <Switch>
             <Route exact path="/" component={SignIn} />
 
-            { AdminRoutes.map(props => isAdmin() ? <Route {...props} /> : <Redirect to="/" />) }
+            { AdminRoutes.map((props, i) => isAdmin() ? <Route key={`admin-${i}`} {...props} /> : <Redirect key={`associate-${i}`}  to="/" />) }
 
-            { AssociateRoute.map(props => isAssociate() ? <Route {...props} /> : <Redirect to="/" />) }
+            { AssociateRoute.map((props, i) => isAssociate() ? <Route key={`associate-${i}`} {...props} /> : <Redirect key={`associate-${i}`}  to="/" />) }
             
             <Route path="*" component={NotFound} />
         </Switch>
