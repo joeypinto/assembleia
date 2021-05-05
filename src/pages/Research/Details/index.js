@@ -10,6 +10,7 @@ import Topbar from '../../../components/Navigation/Topbar'
 
 import CardBasic from '../../../components/Cards/Basic'
 import PageHeading from '../../../components/PageHeading'
+import axios from 'axios';
 
 class DetailResearch extends Component {
     constructor(props) {
@@ -34,12 +35,20 @@ class DetailResearch extends Component {
         }
 
         this.state = {
-            research: research
+            research: research,
+            answers: {}
         }
     }
-    
-    componentWillMount() {
+
+    componentDidMount() {
         document.getElementById('body').className = 'page-top'
+
+        const { match: { params } } = this.props;
+        console.log("params", params)
+
+        // let { id } = useParams()
+
+        // axios.get()
     }
 
     renderQuestions() {

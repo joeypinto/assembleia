@@ -1,30 +1,46 @@
-import React from 'react'
-import { Redirect } from 'react-router-dom'
-import user from '../../services/user';
+import Dashboard from "./../../pages/Dashboard";
+import Logs from "./../../pages/Logs";
+import ParticipationRequest from "./../../pages/ParticipationRequest";
+import PresenceList from "./../../pages/PresenceList";
+import LiveConfiguration from "./../../pages/LiveConfiguration";
 
-class AdminRoute extends React.Component {
+import NewResearch from "../../pages/Research/New";
+import DetailResearch from "../../pages/Research/Details";
+import Research from "../../pages/Research/Listagem";
 
-    render() {
-        const Component = this.props.component;
-        const token = localStorage.getItem('authenticationToken')
-        let isAuthenticated = false
-        
-        if(token){
-            
-            let decoded = user.resolveToken(token)
-            isAuthenticated = verifyAuthorizationField(decoded.id) && decoded.tipo === 2
-        }
-
-        return isAuthenticated ? (
-            <Component />
-        ) : (
-            <Redirect to={{ pathname: '/' }} />
-        );
+const AdminRoutes = [
+    {
+        path: "/dashboard",
+        component: Dashboard,
+    },
+    {
+        path: "/logs",
+        component: Logs
+    },
+    {
+        path: "/participacoes",
+        component: ParticipationRequest
+    },
+    {
+        path: "/lista-de-presenca",
+        component: PresenceList
+    },
+    {
+        path: "/live",
+        component: LiveConfiguration
+    },
+    {
+        path: "/enquete/novo",
+        component: NewResearch
+    },
+    {
+        path: "/enquete/:id",
+        component: DetailResearch
+    },
+    {
+        path: '/enquete',
+        component: Research
     }
-}
+]
 
-function verifyAuthorizationField(value){
-    return value !== undefined && value !== ""
-}
-
-export default AdminRoute;
+export default AdminRoutes
