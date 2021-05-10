@@ -5,8 +5,7 @@ const VideoEmbed = ({ src = '', width = 1280, height = 720 }) => {
     if(src){
         return <div>
             <iframe 
-                width={width}
-                height={height} 
+                style={{width: width, height: height}} 
                 src={src} 
                 title="YouTube video player" 
                 frameBorder="0" 
