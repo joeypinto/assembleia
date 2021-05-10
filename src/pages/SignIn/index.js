@@ -29,7 +29,7 @@ class SignIn extends Component {
 				redirectRoute = "/dashboard"
 			}
 
-			this.props.history.push(redirectRoute)
+			window.location = (redirectRoute)
 			
 		}).catch(err => {
 			console.error("error login", err)

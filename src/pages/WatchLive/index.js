@@ -16,6 +16,7 @@ import axios from '../../services/axios';
 import Swal from 'sweetalert2';
 
 const invitationInterval = 60000
+const eventsInterval = 60000
 
 class WatchLive extends Component {
 
@@ -25,7 +26,8 @@ class WatchLive extends Component {
         this.state = {
             live: null,
             user: User.getData(),
-            messages: []
+            messages: [],
+            messagesOffset: 0
         }
     }
 
@@ -65,9 +67,60 @@ class WatchLive extends Component {
 			})
         }, invitationInterval)
 
-        this.addResearchMock()
+        var eventsIntervalId = setInterval(() => {
+            axios.get(`associate/events?offset=${this.state.messagesOffset}`).then(async (response) => {
+				var events = response.data.participations
+                if(events.length > 0){
+                    var { messages } = this.state
 
-        this.setState({intervalId: intervalId})
+                    var eL = events.length
+                    var messagesOffset = events[eL - 1].id
+                    
+                    for(var i = 0; i <= (eL-1); i++) {
+                        var { type, data } = events[i]
+
+                        if(type === "new_research") {
+                            data = await this.getResearch(data.research.id)
+                            console.log("research data in foreach", data)
+                        }
+
+                        messages.push({
+                            type: type,
+                            data: data
+                        })
+                    }
+
+                    console.log("final messages", messages)
+                    this.setState({
+                        messages: messages,
+                        messagesOffset: messagesOffset
+                    })
+                }
+			})
+        }, eventsInterval)
+
+        this.setState({
+            intervalId: intervalId,
+            eventsIntervalId: eventsIntervalId
+        })
+    }
+
+    getResearch = async (id) => {
+        try {
+            var research = await axios.get(`/associate/research?id=${id}`)
+        } catch(e) {
+            console.log(e)
+
+            research = null
+        }
+
+        return new Promise((resolve, reject) => {
+            if(research === null) {
+                reject(null)
+            }
+
+            resolve(research.data[0])
+        })
     }
 
     addResearchMock() {
@@ -147,6 +200,7 @@ class WatchLive extends Component {
 
     componentWillUnmount() {
         clearInterval(this.state.intervalId)
+        clearInterval(this.state.eventsIntervalId)
     }
 
     handleRequest = () => {
@@ -191,8 +245,9 @@ class WatchLive extends Component {
 
     renderMessages() {
         var messagesBuffer = []
-        
+
         this.state.messages.forEach((message, i) => {
+            console.log('renderMessages loop', message)
             if(message.type === 'participation_accepted'){
                 messagesBuffer.push(
                     <div key={i}>
@@ -204,81 +259,82 @@ class WatchLive extends Component {
             if(message.type === 'new_research'){
                 const research = message.data
 
-                var answeredResearches = localStorage.getItem("answeredResearches")
-                answeredResearches = answeredResearches ? JSON.parse(answeredResearches) : []
-                var researchInStorage = answeredResearches.find(e => e === research.id)
-                console.log('research is in storage?', researchInStorage)
+                if(research) {
+                    var answeredResearches = localStorage.getItem("answeredResearches")
+                    answeredResearches = answeredResearches ? JSON.parse(answeredResearches) : []
+                    var researchInStorage = answeredResearches.find(e => e === research.id)
 
-                if(researchInStorage){
-                    messagesBuffer.push(
-                        <form id={research.id} key={i}>
-                            <h1>{ research.name }</h1>
+                    if(researchInStorage){
+                        messagesBuffer.push(
+                            <form id={research.id} key={i}>
+                                <h1>{ research.name }</h1>
 
-                            <p>Você respondeu a este questionário</p>
-                            <hr />
-                        </form>
-                    )
-                } else {
-                    const userId = this.state.user.id
-                    
-                    var questionsBuffer = []
-                    research.questions.forEach((question, i) => {
-                    
-                        //answers types ifs and renders
-                        var answersBuffer = []
-                        if(question.type === "text") {
-                            answersBuffer.push(
-                                <div>
-                                    <textarea name={`text[${i}]`}required={question.required}></textarea>
+                                <p>Você respondeu a este questionário</p>
+                                <hr />
+                            </form>
+                        )
+                    } else {
+                        const userId = this.state.user.id
+                        
+                        var questionsBuffer = []
+                        research.questions.forEach((question, i) => {
+                        
+                            //answers types ifs and renders
+                            var answersBuffer = []
+                            if(question.type === "text") {
+                                answersBuffer.push(
+                                    <div>
+                                        <textarea name={`text[${i}]`}required={question.required}></textarea>
+                                    </div>
+                                )
+                            } else if(question.type === "radio") {
+                                question.options.forEach(option => {
+                                    answersBuffer.push(
+                                        <div key={option.id}>
+                                            <label>
+                                                <input name={`research_question_option_id[${i}]`} data-index={i} type="radio" value={ option.id } required={question.required} /> { option.text }
+                                            </label>
+                                        </div>
+                                    )
+                                })
+                            } else if (question.type === "checkbox") {
+                                question.options.forEach(option => {
+                                    answersBuffer.push(
+                                        <div key={option.id}>
+                                            <label>
+                                                <input name={`research_question_option_id[${i}]`} data-index={i} type="checkbox" value={ option.id } /> { option.text }
+                                            </label>
+                                        </div>
+                                    )
+                                })
+                            }
+
+                            //questions render block
+                            questionsBuffer.push(
+                                <div key={question.id}>
+                                    <strong>{ i + 1 }</strong>. { question.title }
+                                    <p>{ question.text }</p>
+
+                                    { answersBuffer }
+                                    <input type="hidden" name={`research_id[${i}]`} value={research.id} />
+                                    <input type="hidden" name={`user_id[${i}]`} value={userId} />
+                                    <input type="hidden" name={`research_question_id[${i}]`} value={question.id} />
                                 </div>
                             )
-                        } else if(question.type === "radio") {
-                            question.options.forEach(option => {
-                                answersBuffer.push(
-                                    <div key={option.id}>
-                                        <label>
-                                            <input name={`research_question_option_id[${i}]`} data-index={i} type="radio" value={ option.id } required={question.required} /> { option.text }
-                                        </label>
-                                    </div>
-                                )
-                            })
-                        } else if (question.type === "checkbox") {
-                            question.options.forEach(option => {
-                                answersBuffer.push(
-                                    <div key={option.id}>
-                                        <label>
-                                            <input name={`research_question_option_id[${i}]`} data-index={i} type="checkbox" value={ option.id } /> { option.text }
-                                        </label>
-                                    </div>
-                                )
-                            })
-                        }
+                        })
 
-                        //questions render block
-                        questionsBuffer.push(
-                            <div key={question.id}>
-                                <strong>{ i + 1 }</strong>. { question.title }
-                                <p>{ question.text }</p>
+                        //research block render
+                        messagesBuffer.push(
+                            <form id={research.id} key={i}>
+                                <h1>{ research.name }</h1>
 
-                                { answersBuffer }
-                                <input type="hidden" name={`research_id[${i}]`} value={research.id} />
-                                <input type="hidden" name={`user_id[${i}]`} value={userId} />
-                                <input type="hidden" name={`research_question_id[${i}]`} value={question.id} />
-                            </div>
+                                { questionsBuffer }
+
+                                <button type="submit" onClick={ (e) => this.handleFormSubmit(e, research) }>Go</button>
+                                <hr />
+                            </form>
                         )
-                    })
-
-                    //research block render
-                    messagesBuffer.push(
-                        <form id={research.id} key={i}>
-                            <h1>{ research.name }</h1>
-
-                            { questionsBuffer }
-
-                            <button type="submit" onClick={ (e) => this.handleFormSubmit(e, research) }>Go</button>
-                            <hr />
-                        </form>
-                    )
+                    }
                 }
             }
         })
