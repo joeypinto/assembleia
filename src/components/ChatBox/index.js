@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import $ from 'jquery';
 
 import axios from '../../services/axios';
+import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
 
 
 class ChatBox extends Component {
@@ -14,14 +15,18 @@ class ChatBox extends Component {
             console.log('renderMessages loop', message)
             if(message.type === 'participation_accepted'){
                 messagesBuffer.push(
-                    <div key={i}>
-                        <strong>Admin: </strong> <a href={message.data.link} target="blank">sua solicitação para participar da transmissão foi aceita, clique aqui para entrar</a>
+                    <div key={i} class="received_msg">
+                        <p>
+                            <a href={message.data.link} target="blank">Sua solicitação para participar da transmissão foi aceita, clique aqui para entrar</a>
+                        </p>
+                        <span>Mediador às {convertUTCDateTimeToBrazilianDateTime(message.data.created_at).split(" ")[1]}</span>
                     </div>
                 )
             }
 
             if(message.type === 'new_research'){
-                const research = message.data
+                console.log("event data", message.data)
+                const research = message.data.research
 
                 if(research) {
                     var answeredResearches = localStorage.getItem("answeredResearches")
@@ -47,8 +52,8 @@ class ChatBox extends Component {
                             var answersBuffer = []
                             if(question.type === "text") {
                                 answersBuffer.push(
-                                    <div>
-                                        <textarea name={`text[${i}]`}required={question.required}></textarea>
+                                    <div className="form-group">
+                                        <textarea className="form-control" name={`text[${i}]`}required={question.required}></textarea>
                                     </div>
                                 )
                             } else if(question.type === "radio") {
@@ -89,14 +94,16 @@ class ChatBox extends Component {
 
                         //research block render
                         messagesBuffer.push(
-                            <form id={research.id} key={i}>
-                                <h1>{ research.name }</h1>
+                            <div className="received_form">
+                                <form id={research.id} key={i}>
+                                    <h5>{ research.name }</h5>
 
-                                { questionsBuffer }
+                                    { questionsBuffer }
 
-                                <button type="submit" onClick={ (e) => this.handleFormSubmit(e, research) }>Go</button>
-                                <hr />
-                            </form>
+                                    <button className="btn btn-primary" type="submit" onClick={ (e) => this.handleFormSubmit(e, research) }>Enviar Respostas</button>
+                                </form>
+                                <span>Mediador às {convertUTCDateTimeToBrazilianDateTime(message.data.event?.created_at).split(" ")[1]}</span>
+                            </div>
                         )
                     }
                 }
@@ -191,14 +198,26 @@ class ChatBox extends Component {
 
     render() {
         return  <div className="card">
-            <div className="card-header py-3">
+            <div className="card-header py-3" style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <h6 className="m-0 font-weight-bold text-primary">Chat</h6>
+
+                <a href="/" class="btn btn-light btn-icon-split">
+                    <span class="icon text-gray-600">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                    <span class="text">Desconectar</span>
+                </a>
             </div>
             <div className="card-body" style={{height: "95vh", overflowY: "auto"}}>
                 <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
 
                 <hr/>
                 
+                <div class="received_msg">
+                    <p>Mensagem de teste que será removida em breve</p>
+                    <span>Moderador às { convertUTCDateTimeToBrazilianDateTime("2021-05-03T02:50:13.000Z").split(" ")[1] }</span>
+                </div>
+
                 { this.renderMessages() }
             </div>
         </div>

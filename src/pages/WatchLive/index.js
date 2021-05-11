@@ -14,8 +14,9 @@ import axios from '../../services/axios';
 import Swal from 'sweetalert2';
 import ChatBox from '../../components/ChatBox';
 
-const invitationInterval = 60000
-const eventsInterval = 5000
+//Segundos convertidos em milisegundos
+const invitationInterval = 60 * 1000
+const eventsInterval = 10 * 1000
 
 class WatchLive extends Component {
 
@@ -81,7 +82,13 @@ class WatchLive extends Component {
                         var { type, data } = events[i]
 
                         if(type === "new_research") {
-                            data = await this.getResearch(data.research.id)
+                            const research = await this.getResearch(data.research.id)
+                            
+                            data = {
+                                event: events[i],
+                                research: research
+                            }
+                            
                             console.log("research data in foreach", data)
                         }
 

@@ -1,0 +1,19 @@
+.received_msg, .received_form {
+    p, form {
+        background: #e4e8fb none repeat scroll 0 0;
+        border-radius: 3px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 10px 10px 10px 10px;
+        width: 100%;
+    }
+
+    span{
+        color: #747474;
+        display: block;
+        font-size: 10px;
+        margin: 3px 0 0;
+        margin-bottom: 10px;
+    }
+}
