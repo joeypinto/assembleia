@@ -2,7 +2,8 @@ import Dashboard from "./../../pages/Dashboard";
 import Logs from "./../../pages/Logs";
 import ParticipationRequest from "./../../pages/ParticipationRequest";
 import PresenceList from "./../../pages/PresenceList";
-import LiveConfiguration from "./../../pages/LiveConfiguration";
+import ListLives from "./../../pages/LiveConfiguration/ListLives";
+import NewLive from "./../../pages/LiveConfiguration/NewLive";
 
 import NewResearch from "../../pages/Research/New";
 import DetailResearch from "../../pages/Research/Details";
@@ -26,8 +27,12 @@ const AdminRoutes = [
         component: PresenceList
     },
     {
-        path: "/live",
-        component: LiveConfiguration
+        path: "/lives",
+        component: ListLives
+    },
+    {
+        path: "/lives/novo",
+        component: NewLive
     },
     {
         path: "/enquete/novo",

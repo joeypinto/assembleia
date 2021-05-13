@@ -88,20 +88,23 @@ class DetailResearch extends Component {
                 <div key={`question-${question.id}`}>
                     <h6 className="font-weight-bold text-primary">Questão {i+1}</h6>
                    
-                    <div>
-                        { question.title }
-                    </div>
+                    <div className="row">
+                        <div className="col-md-12">
+                            <strong>Título: </strong> { question.title }
+                        </div>
 
-                    <p>
-                        { question.text }
-                    </p>
+                        <div className="col-md-12">
+                            <strong>Tipo: </strong> { this.renderTypeName(question.type) }
+                        </div>
 
-                    <div>
-                        { this.renderTypeName(question.type) }
-                    </div>
+                        <div className="col-md-12">
+                            <strong>Texto complementar:</strong> <br />
+                            { question.text }
+                        </div>
 
-                    <div>
-                        { question.required ? "Esta questão é obrigatória" : "Esta questão não é obrigatória" }
+                        <div className="col-md-12">
+                            <strong>Questão obrigatória? </strong>{ question.required ? "Sim" : "Não" }
+                        </div>
                     </div>
    
                     { this.renderOptions(question, i) }
@@ -116,28 +119,16 @@ class DetailResearch extends Component {
         return questionsBuffer
     }
 
-    handleOptionInput(event) {
-        var question = event.target.getAttribute('question')
-        var option = event.target.getAttribute('option')
-        var value = event.target.value
-
-        var research = this.state.research
-
-        research.questions[question].options[option] = value
-
-        this.setState({
-            research: research
-        })
-    }
-
     renderOptions(question) {
         var optionsBuffer = []
-        optionsBuffer.push(
-            <h6 key="h6" className="font-weight-bold text-primary">Opções e Números de Votos</h6>
-        )
-
+        
         if(question.type === "radio" || question.type === "checkbox"){
-            question.options.map((option) => {
+
+            optionsBuffer.push(
+                <h6 key="h6" className="font-weight-bold text-primary mt-2">Opções e Números de Votos</h6>
+            )
+
+            question.options.map(option => {
                 return optionsBuffer.push(
                     <div  key={`option-${option.id}`}>
                         <div className="form-group">
@@ -150,6 +141,26 @@ class DetailResearch extends Component {
                     </div>
                 )
             })
+        } else {
+            optionsBuffer.push(
+                <h6 key="h6" className="font-weight-bold text-primary mt-2">Respostas Dissertativas</h6>
+            )    
+
+            if(question.dissertations){
+                question.dissertations.map(dissertation => {
+                    return optionsBuffer.push(
+                        <div className="row">
+                            <div className="col-md-10 mb-2">
+                                <div className="received_msg">
+                                    <p>
+                                        { dissertation }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })
+            }
         }
 
         return optionsBuffer
@@ -176,28 +187,14 @@ class DetailResearch extends Component {
                                         <CardBasic title="Adicionar de Enquete">
                                             <div>
                                                 <h6 className="font-weight-bold text-primary">Informações Gerais</h6>
-                                                <div className="form-group">
-                                                    <input 
-                                                        type="text" 
-                                                        name="name"
-                                                        placeholder="Título do questionário"
-                                                        className="form-control"
-                                                        value={this.state.research.name}
-                                                        readOnly
-                                                    />
-                                                </div>
 
-                                                <div className="form-group">
-                                                    <div className="custom-control custom-checkbox small">
-                                                        <input 
-                                                            className="custom-control-input" 
-                                                            id="customCheck" 
-                                                            type="checkbox" 
-                                                            name="status" 
-                                                            checked={this.state.research.status}
-                                                            disabled
-                                                        />
-                                                        <label className="custom-control-label" htmlFor="customCheck">Checar esta opção se você desejar que a enquete seja enviada imediatamente após o cadastor.</label>
+                                                <div className="row">
+                                                    <div className="col-md-4">
+                                                        <strong>Título: </strong> {this.state.research.name}
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <strong>Status: </strong> {this.state.research.status ? "Ativo" : "Inativo"}
                                                     </div>
                                                 </div>
                                             </div>

@@ -8,10 +8,18 @@ import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
 
 class ChatBox extends Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            messages: this.props.messages
+        }
+    }
+
     renderMessages() {
         var messagesBuffer = []
 
-        this.props.messages.forEach((message, i) => {
+        this.state.messages.forEach((message, i) => {
             console.log('renderMessages loop', message)
             if(message.type === 'participation_accepted'){
                 messagesBuffer.push(
@@ -35,12 +43,14 @@ class ChatBox extends Component {
 
                     if(researchInStorage){
                         messagesBuffer.push(
-                            <form id={research.id} key={i}>
-                                <h1>{ research.name }</h1>
+                            <div className="received_form">
+                                <form id={research.id} key={i}>
+                                    <h5>{ research.name }</h5>
 
-                                <p>Você respondeu a este questionário</p>
-                                <hr />
-                            </form>
+                                    Você respondeu a este questionário
+                                </form>
+                                <span>Mediador às {convertUTCDateTimeToBrazilianDateTime(message.data.event?.created_at).split(" ")[1]}</span>
+                            </div>
                         )
                     } else {
                         const userId = this.props.userId
@@ -196,17 +206,25 @@ class ChatBox extends Component {
         })
     }
 
+    handleDisconnect() {
+        //todo: disparar log de saída aqui
+        
+        localStorage.removeItem("authenticationToken")
+
+        window.location = "/"
+    }
+
     render() {
         return  <div className="card">
             <div className="card-header py-3" style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <h6 className="m-0 font-weight-bold text-primary">Chat</h6>
 
-                <a href="/" class="btn btn-light btn-icon-split">
+                <button onClick={() => this.handleDisconnect()} class="btn btn-light btn-icon-split">
                     <span class="icon text-gray-600">
                         <i class="fas fa-sign-out-alt"></i>
                     </span>
                     <span class="text">Desconectar</span>
-                </a>
+                </button>
             </div>
             <div className="card-body" style={{height: "95vh", overflowY: "auto"}}>
                 <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
