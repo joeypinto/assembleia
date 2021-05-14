@@ -12,19 +12,18 @@ import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
 import axios from '../../../services/axios';
 
+import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
+
 import Swal from 'sweetalert2'
 
+//todo: trazer lista do server
 class ListLives extends Component {
 
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			actualTransmission: {
-				url: null
-			},
-			url: '',
-			user_id: 2
+			lives: []
 		}
 	}
 
@@ -33,14 +32,55 @@ class ListLives extends Component {
 
 		axios.get('/admin/live').then(response => {
 			this.setState({
-				actualTransmission: response.data.live
+				lives: response.data.lives
 			})
 		})
 	}
 
     redirectToNew = () => {
-        this.props.history.push("/enquete/novo")
+        this.props.history.push("/lives/novo")
     }
+
+	renderRows() { 
+		var livesBuffer = []
+		if(this.state.lives){
+			this.state.lives.map(live => {
+				
+				var liveUrl = live.url ? live.url.match(/[\w\-]{11,}/) : ''
+				liveUrl = liveUrl ? liveUrl[0] : ''
+
+				return livesBuffer.push(
+					<tr>
+						<td>
+							<img src={`https://img.youtube.com/vi/${liveUrl}/hqdefault.jpg`} alt="YT Thumb" width="200" />
+						</td>
+						<td>
+							<strong>{live.title}</strong>
+							<p style={{color: "rgba(0,0,0,0.4)"}}>
+								{ live.description }
+							</p>
+						</td>
+						<td>
+							{ convertUTCDateTimeToBrazilianDateTime(live.created_at) }
+						</td>
+						<td>{ live.status ? "Ativa" : "Inativa" }</td>
+						<td>
+							<button className="btn btn-primary" onClick={() => Swal.fire("Ainda não implementado")}>
+								Editar
+							</button>
+						</td>
+						<td>
+							<button className="btn btn-danger" onClick={() => Swal.fire("Ainda não implementado")}>
+								Desativar
+							</button>
+						</td>
+					</tr>
+				)
+			})
+		}
+
+		return livesBuffer
+	}
 
 	render() {
 		return (
@@ -63,7 +103,7 @@ class ListLives extends Component {
 													<thead>
 														<tr>
                                                             <th width="200">Thumb</th>
-															<th>Título</th>
+															<th width="600">Título</th>
 															<th>Data e Hora</th>
 															<th>Status</th>
 															<th>Editar</th>
@@ -81,18 +121,7 @@ class ListLives extends Component {
 														</tr>
 													</tfoot>
 													<tbody>
-														<tr>
-                                                            <td>
-                                                                <img src={`https://img.youtube.com/vi/${this.state.actualTransmission.url ? this.state.actualTransmission.url.match(/[\w\-]{11,}/)[0] : ''}/hqdefault.jpg`} alt="YT Thumb" width="200" />
-                                                            </td>
-                                                            <td>
-                                                                Live de teste
-                                                            </td>
-                                                            <td>13/05/2021 00:02</td>
-                                                            <td>Ativa</td>
-                                                            <td>Editar</td>
-                                                            <td>Desativar</td>
-                                                        </tr>
+														{ this.renderRows() }
 													</tbody>
 												</table>
 											</div>

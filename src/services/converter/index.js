@@ -1,6 +1,15 @@
 const convertUTCDateTimeToBrazilianDateTime = (date) => {
     date = new Date(date)
-    return date.getDate() + '/' + getMonthFromDate(date.getMonth()) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes()
+    return date.getDate() + '/' + getMonthFromDate(date.getMonth()) + '/' + date.getFullYear() + ' ' + addLeftZero(date.getHours()) + ':' + addLeftZero(date.getMinutes())
+}
+
+const addLeftZero = (time) => {
+    console.log('tem um só', time, time.length)
+    if(time <= 9){
+        return "0" + time
+    }
+
+    return time
 }
 
 const getMonthFromDate = (month) => {
