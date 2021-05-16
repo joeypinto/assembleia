@@ -63,7 +63,7 @@ class Logs extends Component {
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		axios.get('admin/logs').then(result => {
 			this.setState({
 				logs: result.data.logs

@@ -10,7 +10,7 @@ import ChartLine from '../../components/Charts/Line';
 import PageHeading from '../../components/PageHeading';
 
 class Dashboard extends Component {
-  componentWillMount() {
+  componentDidMount() {
     document.getElementById('body').className = 'page-top'
   }
 

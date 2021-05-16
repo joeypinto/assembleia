@@ -4,7 +4,6 @@ const convertUTCDateTimeToBrazilianDateTime = (date) => {
 }
 
 const addLeftZero = (time) => {
-    console.log('tem um só', time, time.length)
     if(time <= 9){
         return "0" + time
     }

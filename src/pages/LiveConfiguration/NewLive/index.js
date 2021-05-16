@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -9,49 +10,48 @@ import Topbar from '../../../components/Navigation/Topbar';
 
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
-import VideoEmbed from '../../../components/VideoEmbed';
 import axios from '../../../services/axios';
+import User from '../../../services/user';
 
 import Swal from 'sweetalert2'
 
 class LiveConfiguration extends Component {
 
+	
+
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			actualTransmission: {
-				url: null
-			},
 			url: '',
-			user_id: 2
+			title: '',
+			description: '',
+			status: 0,
+			user_id: User.getData().id
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
-
-		axios.get('/admin/live').then(response => {
-			this.setState({
-				actualTransmission: response.data.live
-			})
-		})
 	}
 
 	handleCreateLive = async () => {
-		axios.post('admin/live', { url: this.state.url, user_id: this.state.user_id}).then(success => {
-			this.setState({
-				actualTransmission: {
-					url: this.state.url
-				},
-				url: ''
-			})
+		const { url, title, status, description, user_id } = this.state
 
+		axios.post('admin/live', { 
+			url: url, 
+			title: title,
+			description: description, 
+			status: status,
+			user_id: user_id
+		}).then(success => {
 			Swal.fire({
 				icon: 'success',
 				title: 'Sucesso',
 				text: 'Link da transmissão alterado com sucesso',
 			  })
+
+			  this.props.history.push("/lives")
 		}).catch(error => {
 			console.log(error)
 			console.log(error.message)
@@ -66,7 +66,7 @@ class LiveConfiguration extends Component {
 	}
 
 	render() {
-		const { url } = this.state
+		const { url, title, status, description } = this.state
 		return (
 			<div>
 				<div id="wrapper">
@@ -81,27 +81,74 @@ class LiveConfiguration extends Component {
 								<div className="row">
 									<div className="col-xl-12">
 										<CardBasic title="Configurações da Transmissão">
-											<div className="input-group">
-												<input 
-													id="url" name="url" 
-													type="text" 
-													value={url}
-													onChange={(e) => this.setState({ url: e.target.value })}
-													required="" 
-													className="form-control bg-light border-0 small" 
-													placeholder="Cole aqui o link da transmissão do youtube, exemplo: https://www.youtube.com/embed/dQw4w9WgXcQ" 
-													aria-label="Cole aqui o link de transmissão do youtube" 
-												/>
-												<div className="input-group-append">
+											<div className="row">
+												<div className="col-md-12">
+													<div className="form-group">
+														<label htmlFor="url">Link</label>
+														<input 
+															id="url" name="url" 
+															type="text" 
+															value={url}
+															onChange={(e) => this.setState({ url: e.target.value })}
+															required="" 
+															className="form-control bg-light border-0 small" 
+															placeholder="Cole aqui o link da transmissão do youtube, exemplo: https://www.youtube.com/embed/dQw4w9WgXcQ"
+														/>
+													</div>
+												</div>
+
+												<div className="col-md-12">
+													<div className="form-group">
+														<label htmlFor="title">Título</label>
+														<input 
+															id="title" name="title" 
+															type="text" 
+															value={title}
+															onChange={(e) => this.setState({ title: e.target.value })}
+															required="" 
+															className="form-control bg-light border-0 small" 
+															placeholder="Escreva o título da sua live"
+														/>
+													</div>
+												</div>
+
+												<div className="col-md-12">
+													<div className="form-group">
+														<label htmlFor="description">Descrição</label>
+														<input 
+															id="description" name="description" 
+															type="text" 
+															value={description}
+															onChange={(e) => this.setState({ description: e.target.value })}
+															required="" 
+															className="form-control bg-light border-0 small" 
+															placeholder="Descrição, ou texto complementar ao título da live"
+														/>
+													</div>
+												</div>
+
+												<div className="col-md-12">
+													<div className="form-group">
+														<label htmlFor="status">Status</label>
+														<select
+															id="status" name="status" 
+															value={status}
+															onChange={(e) => this.setState({ status: e.target.value })}
+															required="" 
+															className="form-control bg-light border-0 small"
+														>
+															<option value="0">Inativa</option>
+															<option value="1">Ativa</option>
+														</select>
+													</div>
+												</div>
+
+												<div className="col-md-12">
 													<button onClick={() => this.handleCreateLive()}  className="btn btn-primary" type="submit">
 														Salvar
-                                  					</button>
+													</button>
 												</div>
-											</div>
-										</CardBasic>
-
-										<CardBasic title="Transmissão atual">
-											<VideoEmbed src={this.state.actualTransmission.url} width="100%"/>
+											</div>						
 										</CardBasic>
 									</div>
 								</div>
@@ -127,4 +174,4 @@ class LiveConfiguration extends Component {
 	}
 }
 
-export default LiveConfiguration;
+export default withRouter(LiveConfiguration);

@@ -27,12 +27,12 @@ const AdminRoutes = [
         component: PresenceList
     },
     {
-        path: "/lives",
-        component: ListLives
-    },
-    {
         path: "/lives/novo",
         component: NewLive
+    },
+    {
+        path: "/lives",
+        component: ListLives
     },
     {
         path: "/enquete/novo",
