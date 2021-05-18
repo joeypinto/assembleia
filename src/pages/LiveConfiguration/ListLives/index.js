@@ -27,7 +27,7 @@ class ListLives extends Component {
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
 
 		axios.get('/admin/live').then(response => {
@@ -41,16 +41,20 @@ class ListLives extends Component {
         this.props.history.push("/lives/novo")
     }
 
+	handleEdit(id) {
+		this.props.history.push(`/lives/${id}/editar`)
+	}
+
 	renderRows() { 
 		var livesBuffer = []
 		if(this.state.lives){
 			this.state.lives.map(live => {
 				
-				var liveUrl = live.url ? live.url.match(/[\w\-]{11,}/) : ''
+				var liveUrl = live.url ? live.url.match(/[\w-]{11,}/) : ''
 				liveUrl = liveUrl ? liveUrl[0] : ''
 
 				return livesBuffer.push(
-					<tr>
+					<tr key={live.id}>
 						<td>
 							<img src={`https://img.youtube.com/vi/${liveUrl}/hqdefault.jpg`} alt="YT Thumb" width="200" />
 						</td>
@@ -65,7 +69,7 @@ class ListLives extends Component {
 						</td>
 						<td>{ live.status ? "Ativa" : "Inativa" }</td>
 						<td>
-							<button className="btn btn-primary" onClick={() => Swal.fire("Ainda não implementado")}>
+							<button className="btn btn-primary" onClick={() => this.handleEdit(live.id)}>
 								Editar
 							</button>
 						</td>
@@ -112,7 +116,7 @@ class ListLives extends Component {
 													</thead>
 													<tfoot>
 														<tr>
-                                                        <th>Embed</th>
+                                                        	<th>Thumb</th>
 															<th>Título</th>
 															<th>Data e Hora</th>
 															<th>Status</th>

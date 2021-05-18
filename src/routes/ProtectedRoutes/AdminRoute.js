@@ -4,6 +4,7 @@ import ParticipationRequest from "./../../pages/ParticipationRequest";
 import PresenceList from "./../../pages/PresenceList";
 import ListLives from "./../../pages/LiveConfiguration/ListLives";
 import NewLive from "./../../pages/LiveConfiguration/NewLive";
+import EditLive from "./../../pages/LiveConfiguration/EditLive";
 
 import NewResearch from "../../pages/Research/New";
 import DetailResearch from "../../pages/Research/Details";
@@ -25,6 +26,10 @@ const AdminRoutes = [
     {
         path: "/lista-de-presenca",
         component: PresenceList
+    },
+    {
+        path: "/lives/:id/editar",
+        component: EditLive
     },
     {
         path: "/lives/novo",
