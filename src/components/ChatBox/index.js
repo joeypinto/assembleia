@@ -16,6 +16,38 @@ class ChatBox extends Component {
         }
     }
 
+    handleRequest = () => {
+        Swal.fire({
+            title: 'Deseja solicitar participação?',
+            text: 'Descreva suscintamente o motivo da sua solicitação',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Confirmar',
+            showLoaderOnConfirm: true,
+            preConfirm: async (description) => {
+                try{
+                    return await axios.post('/associate/invitation', {
+                        user_id: this.props.userId,
+                        description: description
+                    })
+                } catch(e) {
+                    console.log('erro na request', e);
+                    Swal.fire('Erro', 'Erro ao solicitar participação', 'error')
+                    return false
+                }
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('OK', 'Sua solicitação foi enviada, aguarde o retorno', 'success')
+            }
+        })
+    }
+
     renderMessages() {
         var messagesBuffer = []
 

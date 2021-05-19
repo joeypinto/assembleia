@@ -21,6 +21,7 @@ class NewResearch extends Component {
         this.state = {
             research: {
                 name: "",
+                live_id: "",
                 status: false,
                 questions: [
                     {
@@ -31,12 +32,21 @@ class NewResearch extends Component {
                         options: ["", ""]
                     }
                 ]
-            }
+            },
+            lives: []
         }
     }
     
     componentWillMount() {
         document.getElementById('body').className = 'page-top'
+    }
+
+    componentDidMount() {
+        axios.get('/admin/live').then(response => {
+			this.setState({
+				lives: response.data.lives
+			})
+		})
     }
 
     handleResearchInput(event) {
@@ -256,31 +266,47 @@ class NewResearch extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <CardBasic title="Adicionar de Enquete">
-                                            <div>
-                                                <h6 className="font-weight-bold text-primary">Informações Gerais</h6>
-                                                <div className="form-group">
-                                                    <input 
-                                                        type="text" 
-                                                        name="name"
-                                                        placeholder="Título do questionário"
-                                                        className="form-control"
-                                                        value={this.state.research.name}
-                                                        onChange={(event) => this.handleResearchInput(event)}
-                                                    />
-                                                </div>
-
-                                                <div className="form-group">
-                                                    <div className="custom-control custom-checkbox small">
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <h6 className="font-weight-bold text-primary">Informações Gerais</h6>
+                                                    <div className="form-group">
                                                         <input 
-                                                            className="custom-control-input" 
-                                                            id="customCheck" 
-                                                            type="checkbox" 
-                                                            name="status" 
-                                                            checked={this.state.research.status}
+                                                            type="text" 
+                                                            name="name"
+                                                            placeholder="Título do questionário"
+                                                            className="form-control"
+                                                            value={this.state.research.name}
                                                             onChange={(event) => this.handleResearchInput(event)}
                                                         />
-                                                        <label className="custom-control-label" htmlFor="customCheck">Checar esta opção se você desejar que a enquete seja enviada imediatamente após o cadastor.</label>
                                                     </div>
+
+                                                    <div className="form-group">
+                                                        <div className="custom-control custom-checkbox small">
+                                                            <input 
+                                                                className="custom-control-input" 
+                                                                id="customCheck" 
+                                                                type="checkbox" 
+                                                                name="status" 
+                                                                checked={this.state.research.status}
+                                                                onChange={(event) => this.handleResearchInput(event)}
+                                                            />
+                                                            <label className="custom-control-label" htmlFor="customCheck">Checar esta opção se você desejar que a enquete seja enviada imediatamente após o cadastor.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-6">
+                                                    <h6 className="font-weight-bold text-primary">Live</h6>
+                                                    <select
+                                                        name="live_id"
+                                                        placeholder="Título do questionário"
+                                                        className="form-control"
+                                                        value={this.state.research.live_id}
+                                                        onChange={(event) => this.handleResearchInput(event)}
+                                                    >
+                                                        <option>Selecione uma live para associar a enquete</option>
+                                                        { this.state.lives.map(live => <option value={live.id}>{live.id} - {live.title}</option>) }
+                                                    </select>
                                                 </div>
                                             </div>
 
