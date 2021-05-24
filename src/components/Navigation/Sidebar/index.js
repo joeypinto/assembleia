@@ -97,6 +97,19 @@ class Sidebar extends Component {
 				{/* <!-- Divider --> */}
 				<hr className="sidebar-divider d-none d-md-block" />
 
+				<div className="sidebar-heading">
+					Cadastros
+        		</div>
+				<li className="nav-item">
+					<Link className='nav-link' to="/users">
+						<i className="fas fa-fw fa-user-friends"></i>
+						<span>Usuários</span>
+					</Link>
+				</li>
+
+				{/* <!-- Divider --> */}
+				<hr className="sidebar-divider d-none d-md-block" />
+
 				{/* <!-- Sidebar Toggler (Sidebar) --> */}
 				<div className="text-center d-none d-md-inline">
 					<button onClick={() => { clickMenuOpen() }} className="rounded-circle border-0" id="sidebarToggle"></button>

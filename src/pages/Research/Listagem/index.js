@@ -103,8 +103,11 @@ class Research extends Component {
             Swal.fire('Erro', 'Erro ao alterar o status da enquete', 'error')
         })
     }
-    
-    componentWillMount() {
+
+    componentDidMount() {
+        //workaround, remove espaço em branco do title inexistente do plugin
+        document.getElementsByClassName('rdt_TableHeader')[0].remove()
+
         document.getElementById('body').className = 'page-top'
 
         axios.get('/admin/research').then(response => {
@@ -116,11 +119,6 @@ class Research extends Component {
 
             Swal.fire('Erro', 'Erro ao listar as enquetes', 'error')
         })
-    }
-
-    componentDidMount() {
-        //workaround, remove espaço em branco do title inexistente do plugin
-        document.getElementsByClassName('rdt_TableHeader')[0].remove()
     }
 
     redirectToNew = () => {

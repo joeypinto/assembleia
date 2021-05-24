@@ -5,6 +5,8 @@ import PresenceList from "./../../pages/PresenceList";
 import ListLives from "./../../pages/LiveConfiguration/ListLives";
 import NewLive from "./../../pages/LiveConfiguration/NewLive";
 import EditLive from "./../../pages/LiveConfiguration/EditLive";
+import ListUsers from "../../pages/Users/List"
+import NewUser from "./../../pages/Users/Create"
 
 import NewResearch from "../../pages/Research/New";
 import DetailResearch from "../../pages/Research/Details";
@@ -50,6 +52,14 @@ const AdminRoutes = [
     {
         path: '/enquete',
         component: Research
+    },
+    {
+        path: '/users/novo',
+        component: NewUser
+    },
+    {
+        path: '/users',
+        component: ListUsers
     }
 ]
 
