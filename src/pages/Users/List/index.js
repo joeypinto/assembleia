@@ -15,6 +15,7 @@ import Topbar from '../../../components/Navigation/Topbar';
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
 import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
+import { array } from 'prop-types';
 
 
 class Research extends Component {
@@ -22,7 +23,6 @@ class Research extends Component {
         super(props)
 
         this.state = {
-            rowsChange: false,
             users: []
         }
     }
@@ -60,18 +60,21 @@ class Research extends Component {
             cell: (row) => {
                 return <button className="btn btn-primary" onClick={() => this.handleDetails(row)}>Visualizar</button>
             }
+        },
+        {
+            name: 'Editar',
+            cell: (row) => {
+                return <button className="btn btn-primary" onClick={() => this.handleUpdateRedirect(row.id)}>Editar</button>
+            }
+        },
+        {
+            name: 'Deletar',
+            cell: (row) => {
+                return <button className="btn btn-primary" onClick={() => this.handleDelete(row)}>Deletar</button>
+            }
         }
     ]
 
-    handleDetails(row) {
-        console.log(row)
-
-        this.props.history.push({
-            pathname: `/enquete/${row.id}`,
-            state: { research: row }
-        })
-    }
-    
     componentDidMount() {
         //workaround, remove espaço em branco do title inexistente do plugin
         document.getElementsByClassName('rdt_TableHeader')[0].remove()
@@ -89,13 +92,63 @@ class Research extends Component {
         })
     }
 
+    handleDelete = (row) => {
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: `Realmente quer deletar o usuario ${row.name}? Após deletado, não será possível reverter o processo.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Não',
+            confirmButtonText: 'Sim, deletar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/admin/users/${row.id}`).then(sucess => {
+                    Swal.fire(
+                        'Deletado!',
+                        'O usuário foi deletado',
+                        'success'
+                    )
+
+                    var users = this.state.users
+                    const index = users.findIndex(user => user.id === row.id)
+                    users.splice(index, 1)
+
+                    this.setState({
+                        users: users
+                    })
+                }).catch(e => {
+                    console.log(e)
+
+                    Swal.fire(
+                        'Erro',
+                        'Erro ao deletar o usuário',
+                        'error'
+                    )
+                })
+            }
+        })
+    }
+
+    handleUpdateRedirect = (id) => {
+        this.props.history.push(`/users/editar/${id}`)
+    }
+
     redirectToNew = () => {
         this.props.history.push("/users/novo")
     }
 
+    handleDetails(row) {
+        this.props.history.push({
+            pathname: `/users/${row.id}`,
+            state: { user: row }
+        })
+    }
+
     render() {
 
-        const { users, rowsChange } = this.state
+        const { users } = this.state
 
         return (
             <div>
@@ -110,16 +163,12 @@ class Research extends Component {
 
                                 <div className="row">
                                     <div className="col-xl-12">
-                                        <CardBasic title="Listagem de Enquetes">
+                                        <CardBasic title="Listagem de Usuários">
                                             <button onClick={() => this.redirectToNew()} className="btn btn-success">Adicionar Usuário</button>
                                             <DataTable
                                                 columns={this.columns}
                                                 data={users}
                                                 pagination
-
-                                                onSelectedRowsChange={rowsChange}
-                                                Selected={rowsChange}
-                                                clearSelectedRows={rowsChange}
                                             />
                                         </CardBasic>
                                     </div>

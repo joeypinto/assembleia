@@ -11,16 +11,14 @@ import Topbar from '../../../components/Navigation/Topbar';
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
 import axios from '../../../services/axios';
-import User from '../../../services/user';
 
-import Swal from 'sweetalert2'
-
-class LiveConfiguration extends Component {
+class DetailUser extends Component {
 
 	constructor(props) {
 		super(props)
 
 		this.state = {
+            id: null,
 			name: '',
 			email: '',
 			rf: '',
@@ -31,30 +29,14 @@ class LiveConfiguration extends Component {
 
 	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
-	}
 
-	handleCreateLive = async () => {
-		const userData = this.state
+        const userData = this.state
 
-		axios.post('admin/users', userData).then(success => {
-			Swal.fire({
-				icon: 'success',
-				title: 'Sucesso',
-				text: 'Usuário com sucesso',
-			  })
+        const { match: { params } } = this.props;
 
-			  this.props.history.push("/users")
-		}).catch(error => {
-			console.log(error)
-			console.log(error.message)
-			
-			Swal.fire({
-				icon: 'error',
-				title: 'Oops...',
-				text: 'Erro ao cadastrar usuário'
-			})
-		})
-		
+		axios.get(`admin/users/${params.id}`, userData).then(response => {
+            this.setState({ ...response.data.user[0] })
+        })
 	}
 
 	render() {
@@ -72,7 +54,7 @@ class LiveConfiguration extends Component {
 
 								<div className="row">
 									<div className="col-xl-12">
-										<CardBasic title="Novo Usuário">
+										<CardBasic title="Detalhar Usuário">
                                             <div className="form-group">
                                                 <label htmlFor="name">Nome</label>
                                                 <input 
@@ -82,6 +64,7 @@ class LiveConfiguration extends Component {
                                                     onChange={(e) => this.setState({ name: e.target.value })}
                                                     required={true}
                                                     className="form-control bg-light border-0 small"
+                                                    readOnly
                                                 />
                                             </div>
 
@@ -94,6 +77,7 @@ class LiveConfiguration extends Component {
                                                     onChange={(e) => this.setState({ email: e.target.value })}
                                                     required={true}
                                                     className="form-control bg-light border-0 small"
+                                                    readOnly
                                                 />
                                             </div>
                                                 
@@ -106,6 +90,7 @@ class LiveConfiguration extends Component {
                                                     onChange={(e) => this.setState({ rf: e.target.value })}
                                                     required={true}
                                                     className="form-control bg-light border-0 small"
+                                                    readOnly
                                                 />
                                             </div>
 
@@ -118,6 +103,7 @@ class LiveConfiguration extends Component {
                                                     onChange={(e) => this.setState({ cpf: e.target.value })}
                                                     required={true}
                                                     className="form-control bg-light border-0 small"
+                                                    readOnly
                                                 />
                                             </div>
 
@@ -129,6 +115,7 @@ class LiveConfiguration extends Component {
                                                     onChange={(e) => this.setState({ tipo: e.target.value })}
                                                     required="" 
                                                     className="form-control bg-light border-0 small"
+                                                    disabled
                                                 >
                                                     <option value="1">Comum</option>
                                                     <option value="2">Admin</option>
@@ -138,10 +125,6 @@ class LiveConfiguration extends Component {
                                             <div className="col-md-12">
                                                 <button onClick={() => this.props.history.push("/users")}  className="btn btn-default mr-2" type="submit">
                                                     Voltar
-                                                </button>
-
-                                                <button onClick={() => this.handleCreateLive()}  className="btn btn-primary" type="submit">
-                                                    Salvar
                                                 </button>
                                             </div>					
 										</CardBasic>
@@ -169,4 +152,4 @@ class LiveConfiguration extends Component {
 	}
 }
 
-export default withRouter(LiveConfiguration);
+export default withRouter(DetailUser);

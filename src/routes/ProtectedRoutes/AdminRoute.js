@@ -7,6 +7,8 @@ import NewLive from "./../../pages/LiveConfiguration/NewLive";
 import EditLive from "./../../pages/LiveConfiguration/EditLive";
 import ListUsers from "../../pages/Users/List"
 import NewUser from "./../../pages/Users/Create"
+import UpdateUser from "./../../pages/Users/Update"
+import DetailUser from "./../../pages/Users/Details" 
 
 import NewResearch from "../../pages/Research/New";
 import DetailResearch from "../../pages/Research/Details";
@@ -56,6 +58,14 @@ const AdminRoutes = [
     {
         path: '/users/novo',
         component: NewUser
+    },
+    {
+        path: '/users/editar/:id',
+        component: UpdateUser
+    },
+    {
+        path: '/users/:id',
+        component: DetailUser
     },
     {
         path: '/users',

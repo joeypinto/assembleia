@@ -21,6 +21,7 @@ class LiveConfiguration extends Component {
 		super(props)
 
 		this.state = {
+            id: null,
 			name: '',
 			email: '',
 			rf: '',
@@ -31,16 +32,33 @@ class LiveConfiguration extends Component {
 
 	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
+
+        const userData = this.state
+
+        const { match: { params } } = this.props;
+
+		axios.get(`admin/users/${params.id}`, userData).then(response => {
+            this.setState({ ...response.data.user[0] })
+        })
 	}
 
 	handleCreateLive = async () => {
-		const userData = this.state
+        const { id, name, email, rf, cpf, tipo } = this.state
 
-		axios.post('admin/users', userData).then(success => {
+        const userData = {
+            id,
+            name,
+            email,
+            rf,
+            cpf,
+            tipo
+        }
+
+		axios.put('admin/users', userData).then(success => {
 			Swal.fire({
 				icon: 'success',
 				title: 'Sucesso',
-				text: 'Usuário com sucesso',
+				text: 'Usuário editado com sucesso',
 			  })
 
 			  this.props.history.push("/users")
@@ -51,7 +69,7 @@ class LiveConfiguration extends Component {
 			Swal.fire({
 				icon: 'error',
 				title: 'Oops...',
-				text: 'Erro ao cadastrar usuário'
+				text: 'Erro ao editar usuário'
 			})
 		})
 		
@@ -72,7 +90,7 @@ class LiveConfiguration extends Component {
 
 								<div className="row">
 									<div className="col-xl-12">
-										<CardBasic title="Novo Usuário">
+										<CardBasic title="Editar Usuário">
                                             <div className="form-group">
                                                 <label htmlFor="name">Nome</label>
                                                 <input 
