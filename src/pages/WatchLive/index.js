@@ -159,6 +159,7 @@ class WatchLive extends Component {
                                     <ChatBox 
                                         messages={this.state.messages}
                                         userId={this.state.user.id}
+                                        live={this.state.live}
                                     />
                                 </div>     
                             </div>
