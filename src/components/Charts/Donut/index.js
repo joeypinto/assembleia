@@ -7,18 +7,26 @@ class ChartDonut extends Component {
     chartRef = React.createRef();
 
     componentDidMount() {
-
         const myPieChart = this.chartRef.current.getContext("2d");
-        console.log(this.chartRef);
+
+        const { questionData } = this.props
+
+        const forLength = questionData.options.length
+        var labels = []
+        var gData = []
+        for(var i = 0; i < forLength; i++) {
+            labels.push(questionData.options[i].text)
+            gData.push(questionData.options[i].number_of_votes)
+        }
 
         new Chart(myPieChart, {
             type: 'doughnut',
             data: {
-                labels: ["Direct", "Referral", "Social"],
+                labels: labels,
                 datasets: [{
-                    data: [55, 30, 15],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                    data: gData,
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#F8EA8C', '#66CD00'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#E1C340', '#458B00'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
                 }],
             },
@@ -43,13 +51,13 @@ class ChartDonut extends Component {
     }
 
     render() {
+        const { questionData } = this.props
+
         return (
-            <CardBasic title="Donut Chart">
+            <CardBasic title={questionData?.question}>
                  <div className="chart-pie pt-4">
-                        <canvas id="myPieChart" ref={this.chartRef}></canvas>
-                    </div>
-                    <hr />
-                    Styling for the donut chart can be found in the <code>/Components/Charts/Donut/index.js</code> file.
+                    <canvas id="myPieChart" ref={this.chartRef}></canvas>
+                </div>
             </CardBasic>
         )
     }
