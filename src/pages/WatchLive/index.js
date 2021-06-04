@@ -31,24 +31,21 @@ class WatchLive extends Component {
         }
     }
 
-    componentWillMount() {
+    async componentDidMount() {
+        document.getElementsByTagName('body')[0].style.overflow = "hidden"
         document.getElementById('body').className = 'page-top'
 
-        axios.get(`/associate/live?user_id=${this.state.user.id}`).then(response => {
-            this.setState({
-                live: response.data.live
-            })
-        }).catch(err => {
+        var userId = this.state.user.id
+
+        const response = await axios.get(`/associate/live?user_id=${userId}`).catch(err => {
             console.log(err)
 
             Swal.fire('Erro', 'Um erro inesperado ocorreu enquanto abríamos a live, tente novamente mais tarde', 'error')
         })
-    }
 
-    componentDidMount() {
-        document.getElementsByTagName('body')[0].style.overflow = "hidden"
-
-        var userId = this.state.user.id
+        this.setState({
+            live:response.data.live
+        })
 
         //Pooling para buscar a resposta do "Pedir para Participar"
         var intervalId = setInterval(() => {
@@ -70,7 +67,7 @@ class WatchLive extends Component {
 
         //Pooling que recebe eventos, ex: novo questionário
         var eventsIntervalId = setInterval(() => {
-            axios.get(`associate/events?offset=${this.state.messagesOffset}`).then(async (response) => {
+            axios.get(`associate/events?offset=${this.state.messagesOffset}&live_id=${this.state.live.id}`).then(async (response) => {
 				var events = response.data.participations
                 if(events.length > 0){
                     var { messages } = this.state
