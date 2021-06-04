@@ -33,7 +33,7 @@ class ChatBox extends Component {
                     return await axios.post('/associate/invitation', {
                         user_id: this.props.userId,
                         description: description,
-                        event_id: this.props.live.id
+                        live_id: this.props.live.id
                     })
                 } catch(e) {
                     console.log('erro na request', e);
