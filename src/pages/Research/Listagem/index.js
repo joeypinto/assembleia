@@ -58,11 +58,18 @@ class Research extends Component {
         {
             name: 'Alterar Status',
             cell: (row) => {
-                if(row.status === 0){
-                    return <button className="btn btn-success"  onClick={() => this.handleUpdateStatus(row.id, 1)}>Ativar</button>
+                console.log(row)
+                if(row.status === 0 && row.is_finished === 0){
+                    return <button className="btn btn-success"  onClick={() => this.handleUpdateStatus(row.id, 1, 0)}>Ativar</button>
                 }
     
-                return <button className="btn btn-danger" onClick={() => this.handleUpdateStatus(row.id, 0)}>Desativar</button>
+                if(row.status === 1 && row.is_finished === 0) {
+                    return <button className="btn btn-danger" onClick={() => this.handleUpdateStatus(row.id, 0, 1)}>Finalizar</button>
+                }
+                
+                if(row.is_finished === 1){
+                    return <button className="btn btn-default" disabled>Finalizada</button>
+                }
             }
         }, 
         {
@@ -82,25 +89,40 @@ class Research extends Component {
         })
     }
     
-    handleUpdateStatus(researchId, status) {
-        axios.put('/admin/research', {
-            id: researchId,
-            status: status
-        }).then(() => {
-            var { researches } = this.state
+    handleUpdateStatus(researchId, status, isFinished) {
 
-            const index = researches.findIndex(e => e.id === researchId)
-
-            researches[index].status = status
-
-            this.setState({
-                rowsChange: !this.state.rowsChange,
-                researches: researches
-            })
-
-            Swal.fire('Sucesso', 'O status foi alterado com sucesso', 'success')
-        }).catch(() => {
-            Swal.fire('Erro', 'Erro ao alterar o status da enquete', 'error')
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: `Você realmente quer alterar o status desta enquete?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Não',
+            confirmButtonText: 'Sim, alterar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.put('/admin/research', {
+                    id: researchId,
+                    status: status,
+                    is_finished: isFinished
+                }).then(() => {
+                    var { researches } = this.state
+        
+                    const index = researches.findIndex(e => e.id === researchId)
+        
+                    researches[index].status = status
+        
+                    this.setState({
+                        rowsChange: !this.state.rowsChange,
+                        researches: researches
+                    })
+        
+                    Swal.fire('Sucesso', 'O status foi alterado com sucesso', 'success')
+                }).catch(() => {
+                    Swal.fire('Erro', 'Erro ao alterar o status da enquete', 'error')
+                })
+            }
         })
     }
 

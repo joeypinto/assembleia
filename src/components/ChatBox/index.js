@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 import axios from '../../services/axios';
 import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
+import { insertAnsweredResearchInStorage, isResearchInStorage } from '../../services/research'
 
 
 class ChatBox extends Component {
@@ -70,17 +71,15 @@ class ChatBox extends Component {
                 const research = message.data.research
 
                 if(research) {
-                    var answeredResearches = localStorage.getItem("answeredResearches")
-                    answeredResearches = answeredResearches ? JSON.parse(answeredResearches) : []
-                    var researchInStorage = answeredResearches.find(e => e === research.id)
+                    var researchInStorage = isResearchInStorage(research.id)
 
-                    if(researchInStorage){
+                    if(researchInStorage || research.is_finished === 1){
                         messagesBuffer.push(
                             <div className="received_form">
                                 <form id={research.id} key={i}>
                                     <h5>{ research.name }</h5>
 
-                                    Você respondeu a este questionário
+                                    { research.is_finished === 1 ? 'Este questionário está encerrado' : 'Você respondeu a este questionário' }
                                 </form>
                                 <span>Mediador às {convertUTCDateTimeToBrazilianDateTime(message.data.event?.created_at).split(" ")[1]}</span>
                             </div>
@@ -222,10 +221,8 @@ class ChatBox extends Component {
 
         axios.post('/associate/research', JSON.stringify(filtered)).then(() => {
 
-            var answeredResearches = localStorage.getItem("answeredResearches")
-            answeredResearches = answeredResearches ? JSON.parse(answeredResearches) : []
-            answeredResearches.push(research.id)
-            localStorage.setItem("answeredResearches", JSON.stringify(answeredResearches))
+            //todo trocar por função
+            insertAnsweredResearchInStorage(research.id)
 
             this.setState({
                 messages: this.state.messages

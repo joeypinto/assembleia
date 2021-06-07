@@ -14,6 +14,8 @@ import axios from '../../services/axios';
 import Swal from 'sweetalert2';
 import ChatBox from '../../components/ChatBox';
 
+import { insertAnsweredResearchInStorage } from '../../services/research'
+
 //Segundos convertidos em milisegundos
 const invitationInterval = 60 * 1000
 const eventsInterval = 10 * 1000
@@ -87,6 +89,10 @@ class WatchLive extends Component {
                             }
                             
                             console.log("research data in foreach", data)
+                        }
+
+                        if(type === "finished_research") {
+                            insertAnsweredResearchInStorage(data.research.id)
                         }
 
                         messages.push({
