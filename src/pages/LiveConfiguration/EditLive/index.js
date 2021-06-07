@@ -53,6 +53,10 @@ class LiveConfiguration extends Component {
 		})
 	}
 
+	handleBack = () => {
+		this.props.history.push("/eventos")
+	}
+
 	handleCreateLive = async () => {
 		const { id, url, title, status, description, user_id } = this.state
 
@@ -70,7 +74,7 @@ class LiveConfiguration extends Component {
 				text: 'Transmissão alterada com sucesso',
 			  })
 
-			  this.props.history.push("/lives")
+			  this.props.history.push("/eventos")
 		}).catch(error => {
 			console.log(error)
 			console.log(error.message)
@@ -95,11 +99,11 @@ class LiveConfiguration extends Component {
 							<Topbar />
 							<div className="container-fluid">
 
-								<PageHeading title="Editar Transmissão" subtitle="Altere por aqui o código de incorporação de transmissão no site." />
+								<PageHeading title="Editar Eventos" subtitle="Altere por aqui o código de incorporação de transmissão no site." />
 
 								<div className="row">
 									<div className="col-xl-12">
-										<CardBasic title="Configurações da Transmissão">
+										<CardBasic title="Configurações da Eventos">
 											<div className="row">
 												<div className="col-md-12">
 													<div className="form-group">
@@ -126,7 +130,7 @@ class LiveConfiguration extends Component {
 															onChange={(e) => this.setState({ title: e.target.value })}
 															required="" 
 															className="form-control bg-light border-0 small" 
-															placeholder="Escreva o título da sua live"
+															placeholder="Escreva o título do seu evento"
 														/>
 													</div>
 												</div>
@@ -141,7 +145,7 @@ class LiveConfiguration extends Component {
 															onChange={(e) => this.setState({ description: e.target.value })}
 															required="" 
 															className="form-control bg-light border-0 small" 
-															placeholder="Descrição, ou texto complementar ao título da live"
+															placeholder="Descrição, ou texto complementar ao título do evento"
 														/>
 													</div>
 												</div>
@@ -163,6 +167,9 @@ class LiveConfiguration extends Component {
 												</div>
 
 												<div className="col-md-12">
+													<button onClick={() => this.handleBack()}  className="btn btn-default" type="submit">
+														Voltar
+													</button>
 													<button onClick={() => this.handleCreateLive()}  className="btn btn-primary" type="submit">
 														Salvar
 													</button>

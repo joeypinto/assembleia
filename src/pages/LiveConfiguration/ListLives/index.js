@@ -38,11 +38,11 @@ class ListLives extends Component {
 	}
 
     redirectToNew = () => {
-        this.props.history.push("/lives/novo")
+        this.props.history.push("/eventos/novo")
     }
 
 	handleEdit(id) {
-		this.props.history.push(`/lives/${id}/editar`)
+		this.props.history.push(`/eventos/${id}/editar`)
 	}
 
 	renderRows() { 
@@ -96,12 +96,12 @@ class ListLives extends Component {
 							<Topbar />
 							<div className="container-fluid">
 
-								<PageHeading title="Listagem de Transmissões" subtitle="Listagem e histórico das transmissões já cadastradas" />
+								<PageHeading title="Listagem de Eventos" subtitle="Listagem e histórico dos eventos já cadastrados" />
 
 								<div className="row">
 									<div className="col-xl-12">
-										<CardBasic title="Listagem de Transmissões">
-                                            <button onClick={() => this.redirectToNew()} className="btn btn-success mb-2">Adicionar Transmissão</button>
+										<CardBasic title="Listagem de Eventos">
+                                            <button onClick={() => this.redirectToNew()} className="btn btn-success mb-2">Adicionar Evento</button>
                                             <div className="table-responsive">
 												<table className="table table-bordered" width="100%" cellSpacing="0">
 													<thead>

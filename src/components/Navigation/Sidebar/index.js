@@ -64,9 +64,9 @@ class Sidebar extends Component {
 
 				{/* <!-- Nav Item - Charts --> */}
 				<li className="nav-item">
-					<Link className="nav-link" to="/lives">
+					<Link className="nav-link" to="/eventos">
 						<i className="fas fa-fw fa-video"></i>
-						<span>Configurações da Live</span>
+						<span>Eventos</span>
 					</Link>
 				</li>
 
