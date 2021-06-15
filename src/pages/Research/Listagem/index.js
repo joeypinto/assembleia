@@ -15,6 +15,7 @@ import Topbar from '../../../components/Navigation/Topbar';
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
 import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
+import ResearchesListComponent from '../../../components/Researches/List';
 
 
 class Research extends Component {
@@ -27,109 +28,7 @@ class Research extends Component {
         }
     }
 
-    columns = [
-        {
-            name: "#",
-            selector: "id",
-            sortable: true
-        },
-        {
-            name: "Título",
-            selector: "name",
-            sortable: true
-        },
-        {
-            name: 'Data e Hora',
-            selector: 'created_at',
-            sortable: true,
-            cell: (row) => convertUTCDateTimeToBrazilianDateTime(row.created_at)
-        },
-        {
-            name: 'Status',
-            selector: 'status',
-            cell: (row) => {
-                if(row.status === 1){
-                    return 'Ativado'
-                }
-    
-                return 'Desativado'
-            }
-        },
-        {
-            name: 'Alterar Status',
-            cell: (row) => {
-                console.log(row)
-                if(row.status === 0 && row.is_finished === 0){
-                    return <button className="btn btn-success"  onClick={() => this.handleUpdateStatus(row.id, 1, 0)}>Ativar</button>
-                }
-    
-                if(row.status === 1 && row.is_finished === 0) {
-                    return <button className="btn btn-danger" onClick={() => this.handleUpdateStatus(row.id, 0, 1)}>Finalizar</button>
-                }
-                
-                if(row.is_finished === 1){
-                    return <button className="btn btn-default" disabled>Finalizada</button>
-                }
-            }
-        }, 
-        {
-            name: 'Visualizar',
-            cell: (row) => {
-                return <button className="btn btn-primary" onClick={() => this.handleDetails(row)}>Visualizar</button>
-            }
-        }
-    ]
-
-    handleDetails(row) {
-        console.log(row)
-
-        this.props.history.push({
-            pathname: `/enquete/${row.id}`,
-            state: { research: row }
-        })
-    }
-    
-    handleUpdateStatus(researchId, status, isFinished) {
-
-        Swal.fire({
-            title: 'Você tem certeza?',
-            text: `Você realmente quer alterar o status desta enquete?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            cancelButtonText: 'Não',
-            confirmButtonText: 'Sim, alterar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                axios.put('/admin/research', {
-                    id: researchId,
-                    status: status,
-                    is_finished: isFinished
-                }).then(() => {
-                    var { researches } = this.state
-        
-                    const index = researches.findIndex(e => e.id === researchId)
-        
-                    researches[index].status = status
-        
-                    this.setState({
-                        rowsChange: !this.state.rowsChange,
-                        researches: researches
-                    })
-        
-                    Swal.fire('Sucesso', 'O status foi alterado com sucesso', 'success')
-                }).catch(() => {
-                    Swal.fire('Erro', 'Erro ao alterar o status da enquete', 'error')
-                })
-            }
-        })
-    }
-
     componentDidMount() {
-        //workaround, remove espaço em branco do title inexistente do plugin
-        document.getElementsByClassName('rdt_TableHeader')[0].remove()
-
         document.getElementById('body').className = 'page-top'
 
         axios.get('/admin/research').then(response => {
@@ -165,15 +64,10 @@ class Research extends Component {
                                 <div className="row">
                                     <div className="col-xl-12">
                                         <CardBasic title="Listagem de Enquetes">
-                                            <button onClick={() => this.redirectToNew()} className="btn btn-success">Adicionar Enquete</button>
-                                            <DataTable
-                                                columns={this.columns}
-                                                data={researches}
-                                                pagination
-
-                                                onSelectedRowsChange={rowsChange}
-                                                Selected={rowsChange}
-                                                clearSelectedRows={rowsChange}
+                                            <button onClick={() => this.redirectToNew()} className="btn btn-success mb-2">Adicionar Enquete</button>
+                                            <ResearchesListComponent
+                                                researches={this.state.researches}
+                                                updateStateResearch={ (newState) => { this.setState({ researches: newState }) } }
                                             />
                                         </CardBasic>
                                     </div>

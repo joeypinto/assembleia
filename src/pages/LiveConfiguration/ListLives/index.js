@@ -45,6 +45,10 @@ class ListLives extends Component {
 		this.props.history.push(`/eventos/${id}/editar`)
 	}
 
+	handleDetails(id) {
+		this.props.history.push(`/eventos/${id}`)
+	}
+
 	renderRows() { 
 		var livesBuffer = []
 		if(this.state.lives){
@@ -68,6 +72,11 @@ class ListLives extends Component {
 							{ convertUTCDateTimeToBrazilianDateTime(live.created_at) }
 						</td>
 						<td>{ live.status ? "Ativa" : "Inativa" }</td>
+						<td>
+							<button className="btn btn-primary" onClick={() => this.handleDetails(live.id)}>
+								Ver
+							</button>
+						</td>
 						<td>
 							<button className="btn btn-primary" onClick={() => this.handleEdit(live.id)}>
 								Editar
@@ -110,6 +119,7 @@ class ListLives extends Component {
 															<th width="600">Título</th>
 															<th>Data e Hora</th>
 															<th>Status</th>
+															<th>Ver</th>
 															<th>Editar</th>
 															<th>Desativar</th>
 														</tr>
@@ -120,6 +130,7 @@ class ListLives extends Component {
 															<th>Título</th>
 															<th>Data e Hora</th>
 															<th>Status</th>
+															<th>Ver</th>
 															<th>Editar</th>
 															<th>Desativar</th>
 														</tr>

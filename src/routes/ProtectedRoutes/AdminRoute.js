@@ -5,6 +5,7 @@ import PresenceList from "./../../pages/PresenceList";
 import ListLives from "./../../pages/LiveConfiguration/ListLives";
 import NewLive from "./../../pages/LiveConfiguration/NewLive";
 import EditLive from "./../../pages/LiveConfiguration/EditLive";
+import DetailLive from "./../../pages/LiveConfiguration/DetailLive";
 import ListUsers from "../../pages/Users/List"
 import NewUser from "./../../pages/Users/Create"
 import UpdateUser from "./../../pages/Users/Update"
@@ -38,6 +39,10 @@ const AdminRoutes = [
     {
         path: "/eventos/novo",
         component: NewLive
+    },
+    {
+        path: "/eventos/:id",
+        component: DetailLive
     },
     {
         path: "/eventos",

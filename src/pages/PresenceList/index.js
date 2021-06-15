@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import DataTable from 'react-data-table-component'; //Examples at https://jbetancur.github.io/react-data-table-component/?path=/story/export-csv--using-actions
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,21 +12,7 @@ import PageHeading from '../../components/PageHeading';
 
 import axios from '../../services/axios';
 
-import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
-
-const columns = [
-	{
-		name: "Nome",
-		selector: "name",
-		sortable: true
-	},
-	{
-		name: 'Data e Hora',
-		selector: 'created_at',
-		sortable: true,
-		cell: (row) => convertUTCDateTimeToBrazilianDateTime(row.created_at)
-	},
-];
+import PresenceListComponent from '../../components/PresenceList'
 
 class PresenceList extends Component {
 
@@ -39,7 +24,7 @@ class PresenceList extends Component {
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
 
 		axios.get('admin/presence-list').then(result => {
@@ -48,8 +33,6 @@ class PresenceList extends Component {
 			})
 		})
 	}
-
-
 
 	render() {
 		return (
@@ -64,11 +47,8 @@ class PresenceList extends Component {
 								<div className="row">
 									<div className="col-xl-12">
 										<CardBasic title="Lista de presença">
-											<DataTable
-												title="Lista de presença"
-												columns={columns}
-												data={this.state.precenseList}
-												pagination
+											<PresenceListComponent
+												presences={this.state.precenseList}
 											/>
 										</CardBasic>
 									</div>
