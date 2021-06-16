@@ -1,3 +1,6 @@
+import axios from '../axios';
+import Swal from 'sweetalert2'
+
 const insertAnsweredResearchInStorage = (researchId) => {
     var answeredResearches = localStorage.getItem("answeredResearches")
     answeredResearches = answeredResearches ? JSON.parse(answeredResearches) : []
@@ -13,6 +16,18 @@ const isResearchInStorage = (researchId) => {
     return researchInStorage
 }
 
+const getResearchListByLiveId = async (liveId) => {
+    const response = await axios.get('/admin/research?live_id='+liveId).catch(err => {
+        Swal.fire('Erro', 'Erro ao listar as enquetes', 'error')
+    })
+
+    if(!response) {
+        return []
+    }
+
+    return response.data
+}
+
 export default insertAnsweredResearchInStorage
 
-export { insertAnsweredResearchInStorage, isResearchInStorage }
+export { insertAnsweredResearchInStorage, isResearchInStorage, getResearchListByLiveId }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Swal from 'sweetalert2';
+import { withRouter } from 'react-router-dom'
 
 import axios from '../../../services/axios';
 import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
@@ -123,4 +124,4 @@ class ResearchesListComponent extends Component {
     }
 }
 
-export default ResearchesListComponent
+export default withRouter(ResearchesListComponent)

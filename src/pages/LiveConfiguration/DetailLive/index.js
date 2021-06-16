@@ -11,6 +11,7 @@ import Topbar from '../../../components/Navigation/Topbar';
 import CardBasic from '../../../components/Cards/Basic';
 import PageHeading from '../../../components/PageHeading';
 import axios from '../../../services/axios';
+import { getResearchListByLiveId } from '../../../services/research';
 import User from '../../../services/user';
 import ResearchesListComponent from '../../../components/Researches/List';
 import PresenceListComponent from '../../../components/PresenceList';
@@ -35,7 +36,7 @@ class LiveConfiguration extends Component {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		document.getElementById('body').className = 'page-top'
 
         const { match: { params } } = this.props;
@@ -55,17 +56,12 @@ class LiveConfiguration extends Component {
             }
 		})
 
-        axios.get('/admin/research').then(response => {
-            this.setState({
-                researches: response.data
-            });
-        }).catch(err => {
-            console.log(err)
-
-            Swal.fire('Erro', 'Erro ao listar as enquetes', 'error')
+        const researches = await getResearchListByLiveId(params.id)
+        this.setState({
+            researches: researches
         })
 
-        axios.get('admin/presence-list').then(result => {
+        axios.get(`admin/presence-list?live_id=${params.id}`).then(result => {
 			this.setState({
 				precenseList: result.data.logs
 			})
