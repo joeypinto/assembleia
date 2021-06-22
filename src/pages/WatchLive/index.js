@@ -17,7 +17,7 @@ import ChatBox from '../../components/ChatBox';
 import { insertAnsweredResearchInStorage } from '../../services/research'
 
 //Segundos convertidos em milisegundos
-const invitationInterval = 60 * 1000
+const invitationInterval = 10 * 1000
 const eventsInterval = 10 * 1000
 
 class WatchLive extends Component {
@@ -38,6 +38,9 @@ class WatchLive extends Component {
         document.getElementById('body').className = 'page-top'
 
         var userId = this.state.user.id
+
+        window.addEventListener('resize', this.handleResize);
+        this.setWindowDimensions(this.getWindowDimensions())
 
         const response = await axios.get(`/associate/live?user_id=${userId}`).catch(err => {
             console.log(err)
@@ -141,10 +144,41 @@ class WatchLive extends Component {
 
     renderLive() {
         if(this.state.live){
-            return <VideoEmbed src={this.state.live.url} width="100%" height="100vh"/>
+
+            var videoHeight = '100vh'
+
+            console.log("video changing window width", this.state.windowWidth)
+            if(this.state.windowWidth <= 576 ){
+                videoHeight = 200
+            }
+
+            if(this.state.windowWidth > 576 && this.state.windowWidth <= 992){
+                videoHeight = 400
+            }
+
+            return <VideoEmbed src={this.state.live.url} width="100%" height={videoHeight}/>
         }
         
         return null
+    }
+
+    handleResize = () => {
+        this.setWindowDimensions(this.getWindowDimensions())
+    }
+
+    setWindowDimensions = ({width, height}) => {
+        this.setState({
+            windowHeight: height,
+            windowWidth: width
+        })
+    }
+
+    getWindowDimensions = () => {
+        const { innerWidth: width, innerHeight: height } = window;
+        return {
+            width,
+            height
+        };
     }
 
     render() {
@@ -154,11 +188,11 @@ class WatchLive extends Component {
                     <div id="content-wrapper" className="d-flex flex-column">
                         <div id="content">
                             <div className="row">
-                                <div className="col-xl-9 col-lg-8" style={{paddingRight: 0}}>
+                                <div className="col-xl-9 col-lg-8 col-sm-12" style={{paddingRight: 0}}>
                                     { this.renderLive() }
                                 </div>
 
-                                <div className="col-xl-3 col-lg-4" style={{paddingLeft: 0}}>
+                                <div className="col-xl-3 col-lg-4 col-sm-12" style={{paddingLeft: 0}}>
                                     <ChatBox 
                                         messages={this.state.messages}
                                         userId={this.state.user.id}
