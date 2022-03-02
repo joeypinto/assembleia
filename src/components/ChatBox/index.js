@@ -69,7 +69,7 @@ class ChatBox extends Component {
             if(message.type === 'new_research'){
                 console.log("event data", message.data)
                 const research = message.data.research
-
+                console.log(research)
                 if(research) {
                     var researchInStorage = isResearchInStorage(research.id)
 

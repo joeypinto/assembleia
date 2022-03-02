@@ -47,7 +47,7 @@ class Dashboard extends Component {
 					})
 				}
 			})
-		}, 2500)
+		}, 5000)
 
 		// store intervalId in the state so it can be accessed later:
 		this.setState({intervalId: intervalId})

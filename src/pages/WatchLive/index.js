@@ -16,6 +16,19 @@ import ChatBox from '../../components/ChatBox';
 
 import { insertAnsweredResearchInStorage } from '../../services/research'
 
+import firebaseApp from "../../services/firebase";
+
+import {
+    getDatabase,
+    ref,
+    onValue,
+    set,
+    remove,
+    update,
+    push,
+    child,
+  } from "firebase/database";
+
 //Segundos convertidos em milisegundos
 const invitationInterval = 10 * 1000
 const eventsInterval = 10 * 1000
@@ -34,6 +47,8 @@ class WatchLive extends Component {
     }
 
     async componentDidMount() {
+        const db = getDatabase();
+
         document.getElementsByTagName('body')[0].style.overflow = "hidden"
         document.getElementById('body').className = 'page-top'
 
@@ -49,74 +64,109 @@ class WatchLive extends Component {
         })
 
         this.setState({
-            live:response.data.live
+            live: response.data.live
         })
 
-        //Pooling para buscar a resposta do "Pedir para Participar"
-        var intervalId = setInterval(() => {
-            axios.get(`associate/invitation?user_id=${userId}`).then((response) => {
-				if(response.data.participation){
-                    var { messages } = this.state
-                    
-                    messages.push({
-                        type: "participation_accepted",
-                        data: response.data.participation
-                    })
+        // //Pooling para buscar a resposta do "Pedir para Participar"
+        // var intervalId = setInterval(() => {
+        axios.get(`associate/invitation?user_id=${userId}`).then((response) => {
+            if(response.data.participation){
+                var { messages } = this.state
+                
+                messages.push({
+                    type: "participation_accepted",
+                    data: response.data.participation
+                })
 
-                    this.setState({
-                        messages: messages
-                    })
-                }
-			})
-        }, invitationInterval)
+                this.setState({
+                    messages: messages
+                })
+            }
+        })
+        // }, invitationInterval)
 
         //Pooling que recebe eventos, ex: novo questionário
-        var eventsIntervalId = setInterval(() => {
-            axios.get(`associate/events?offset=${this.state.messagesOffset}&live_id=${this.state.live.id}`).then(async (response) => {
-				var events = response.data.participations
-                if(events.length > 0){
-                    var { messages } = this.state
+        // var eventsIntervalId = setInterval(() => {
+        axios.get(`associate/events?offset=${this.state.messagesOffset}&live_id=${this.state.live.id}`).then(async (response) => {
+            var events = response.data.participations
+            if(events.length > 0){
+                var { messages } = this.state
 
-                    var eL = events.length
-                    var messagesOffset = events[eL - 1].id
+                var eL = events.length
+                var messagesOffset = events[eL - 1].id
+                
+                for(var i = 0; i <= (eL-1); i++) {
+                    var { type, data } = events[i]
                     
-                    for(var i = 0; i <= (eL-1); i++) {
-                        var { type, data } = events[i]
-
-                        if(type === "new_research") {
-                            const research = await this.getResearch(data.research.id)
-                            
-                            data = {
-                                event: events[i],
-                                research: research
-                            }
-                            
-                            console.log("research data in foreach", data)
+                    if(type === "new_research") {
+                        const research = await this.getResearch(data.research.id)
+                        
+                        data = {
+                            event: events[i],
+                            research: research
                         }
+                        
+                        // console.log("research data in foreach", data)
 
-                        if(type === "finished_research") {
-                            insertAnsweredResearchInStorage(data.research.id)
-                        }
-
-                        messages.push({
-                            type: type,
-                            data: data
-                        })
                     }
 
-                    console.log("final messages", messages)
-                    this.setState({
-                        messages: messages,
-                        messagesOffset: messagesOffset
+                    if(type === "finished_research") {
+                        insertAnsweredResearchInStorage(data.research.id)
+                    }
+
+                    messages.push({
+                        type: type,
+                        data: data
                     })
                 }
-			})
-        }, eventsInterval)
 
-        this.setState({
-            intervalId: intervalId,
-            eventsIntervalId: eventsIntervalId
+                // console.log("final messages", messages)
+                this.setState({
+                    messages: messages,
+                    messagesOffset: messagesOffset
+                })
+            }
+        }).finally(() => {
+            var { messages } = this.state
+            const ids = messages.map(({data}) => data.research.id.toString())
+            console.log(ids)
+            onValue(ref(db, `/lives/${response.data.live.id}/researches`), (snapshot) => {
+
+                const data = snapshot.val();
+
+                var rks = data ? Object.keys(data) : null
+                if(!rks) return
+                // if(!messages.length) return
+
+                console.log(rks)
+
+                for(const rk of rks) {
+                    if (ids.includes(rk)) {
+                        continue    
+                    }
+                    console.log(data[rk])
+                    if (data[rk].research.status.status) {
+                        console.log("add pergunta na lista")
+                        messages.push({
+                            type: data[rk].research.status.status,
+                            data: data[rk]
+                        })
+                    }
+                }
+
+                this.setState({
+                    messages: messages
+                })
+                
+            });
         })
+
+        // }, eventsInterval)
+
+        // this.setState({
+        //     intervalId: intervalId,
+        //     eventsIntervalId: eventsIntervalId
+        // })
     }
 
     getResearch = async (id) => {
@@ -138,8 +188,8 @@ class WatchLive extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.state.intervalId)
-        clearInterval(this.state.eventsIntervalId)
+        // clearInterval(this.state.intervalId)
+        // clearInterval(this.state.eventsIntervalId)
     }
 
     renderLive() {
@@ -147,7 +197,7 @@ class WatchLive extends Component {
 
             var videoHeight = '100vh'
 
-            console.log("video changing window width", this.state.windowWidth)
+            // console.log("video changing window width", this.state.windowWidth)
             if(this.state.windowWidth <= 576 ){
                 videoHeight = 200
             }
