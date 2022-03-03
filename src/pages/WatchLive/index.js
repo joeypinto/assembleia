@@ -129,11 +129,11 @@ class WatchLive extends Component {
             }
         }).finally(() => {
             var { messages } = this.state
-            console.log(messages)
-            const idsPa = messages.map(({data}) => data.type === "participation_accepted" ? data.id.toString() : null)
-            const idsRk = messages.map(({data}) => data.type === "new_research" ? data.research.id.toString() : null)
-            console.log(idsRk)
-            console.log(idsPa)
+            console.log(messages, "messages")
+            const idsPa = messages.filter((data) => data.type === "participation_accepted")
+            const idsRk = messages.map((data) => data.type === "new_research" ? data.data.research.id.toString() : null)
+            console.log(idsRk, "rks")
+            // console.log(idsPa)
             onValue(ref(db, `/lives/${response.data.live.id}/researches`), (snapshot) => {
 
                 const data = snapshot.val();
@@ -165,10 +165,11 @@ class WatchLive extends Component {
                 const data = snapshot.val();
                 var pas = data;
                 if(!pas) return
-                console.log(pas)
-                console.log(idsPa)
+                // console.log(pas)
+                console.log(idsPa, "idsPa")
                 if (idsPa.length === 0) {
                     if (pas.link) {
+                        console.log("aquii 2")
                         messages.push({
                             type: "participation_accepted",
                             data: pas
