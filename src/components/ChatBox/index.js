@@ -77,7 +77,7 @@ class ChatBox extends Component {
                         messagesBuffer.push(
                             <div className="received_form">
                                 <form id={research.id} key={i}>
-                                    <h5>{ research.name }</h5>
+                                    <h5 class="title-name">{ research.name }</h5>
 
                                     { research.is_finished === 1 ? 'Este questionário está encerrado' : 'Você respondeu a este questionário' }
                                 </form>
@@ -138,7 +138,7 @@ class ChatBox extends Component {
                         messagesBuffer.push(
                             <div className="received_form">
                                 <form id={research.id} key={i}>
-                                    <h5>{ research.name }</h5>
+                                    <h5 class="title-name">{ research.name }</h5>
 
                                     { questionsBuffer }
 
@@ -245,7 +245,7 @@ class ChatBox extends Component {
     }
 
     render() {
-        return  <div className="card">
+        return  <div className="card chat-content">
             <div className="card-header py-3" style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                 <h6 className="m-0 font-weight-bold text-primary">Chat</h6>
 
@@ -256,7 +256,7 @@ class ChatBox extends Component {
                     <span class="text">Desconectar</span>
                 </button>
             </div>
-            <div className="card-body" style={{height: "95vh", overflowY: "auto"}}>
+            <div className="card-body scroll-chat">
                 <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
 
                 <hr/>
