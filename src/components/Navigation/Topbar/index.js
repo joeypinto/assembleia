@@ -6,6 +6,11 @@ import { bindActionCreators } from 'redux';
 import { clickMenuOpen } from '../../../redux/actions';
 
 class Topbar extends Component {
+  handleDisconnect() {
+    //todo: disparar log de saída aqui    
+    localStorage.removeItem("authenticationToken")
+    window.location = "/"
+}
 	render() {
 		const { clickMenuOpen } = this.props;
 
@@ -153,7 +158,7 @@ class Topbar extends Component {
 					<div className="topbar-divider d-none d-sm-block"></div>
 
 					<li className="nav-item">
-						<button className="nav-link" style={{ border: 'none', backgroundColor: '#fff' }}>
+						<button className="nav-link" onClick={() => this.handleDisconnect()} style={{ border: 'none', backgroundColor: '#fff' }}>
 							<span className="mr-2 d-none d-lg-inline text-gray-600 small">Sair</span>
 							<i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
 						</button>
