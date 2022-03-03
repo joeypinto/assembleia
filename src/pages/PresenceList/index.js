@@ -11,7 +11,7 @@ import CardBasic from '../../components/Cards/Basic';
 import PageHeading from '../../components/PageHeading';
 
 import axios from '../../services/axios';
-
+import Swal from 'sweetalert2'
 import PresenceListComponent from '../../components/PresenceList'
 
 class PresenceList extends Component {
@@ -20,20 +20,36 @@ class PresenceList extends Component {
 		super(props);
 
 		this.state = {
-			precenseList: []
+			precenseList: [],
+            lives: []
 		}
 	}
 
 	componentDidMount() {
 		document.getElementById('body').className = 'page-top'
+		axios.get('/admin/live').then(response => {
+			this.setState({
+				lives: response.data.lives
+			})
+		})	
+	}
+    handleEventChange = async (event) => {
+        if(!this.state.selectedEvent){
+            Swal.fire("Atenção", "Você deve selecionar um evento antes de filtrar", "warning")
+            return
+        }
 
-		axios.get('admin/presence-list').then(result => {
+			if(!this.state.selectedEvent){
+				Swal.fire("Atenção", "Você deve selecionar um evento antes de filtrar", "warning")
+				return
+			}	
+		
+		axios.get('admin/presence-list?live_id='+this.state.selectedEvent).then(result => {
 			this.setState({
 				precenseList: result.data.logs
 			})
 		})
 	}
-
 	render() {
 		return (
 			<div>
@@ -47,6 +63,17 @@ class PresenceList extends Component {
 								<div className="row">
 									<div className="col-xl-12">
 										<CardBasic title="Lista de presença">
+										<form class="form-inline">
+                                                <div class="form-group mx-sm-3 mb-2">
+                                                    <label for="inputSelectLive" class="sr-only">Selecione o evento</label>
+                                                    <select class="form-control" id="inputSelectLive" placeholder="Selecione o evento" onChange={(e) => this.setState({ selectedEvent: e.target.value })}>
+                                                        <option>Selecione um evento para ver suas enquetes</option>
+                                                        { this.state.lives.map(live => <option value={live.id}>{live.id} - {live.title}</option>) }
+                                                    </select>
+                                                </div>
+                                                <button type="button" onClick={() => this.handleEventChange()} class="btn btn-primary mb-2">Procurar enquetes do evento</button>
+                                            </form>
+                                            <hr />
 											<PresenceListComponent
 												presences={this.state.precenseList}
 											/>
