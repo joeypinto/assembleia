@@ -125,7 +125,9 @@ class Dashboard extends Component {
 			axios.post('admin/change-invitation-status', {
 				link: url,
 				status: 1,
-				id: data.participationId
+				id: data.participationId,
+				user_id: data.userId,
+				live_id: data.liveId
 			}).then(() => {
 				this.updateRequestsState(data.participationId, 1, url)
 			}).catch(err => {
@@ -140,7 +142,9 @@ class Dashboard extends Component {
 		axios.post('admin/change-invitation-status', {
 			link: null,
 			status: 0,
-			id: data.participationId
+			id: data.participationId,
+			user_id: data.userId,
+			live_id: data.liveId
 		}).then(() => {
 			this.updateRequestsState(data.participationId)
 		}).catch(err => {

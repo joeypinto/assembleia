@@ -47,11 +47,12 @@ class WatchLive extends Component {
     }
 
     async componentDidMount() {
+        
         const db = getDatabase();
-
+        
         document.getElementsByTagName('body')[0].style.overflow = "hidden"
         document.getElementById('body').className = 'page-top'
-
+        
         var userId = this.state.user.id
 
         window.addEventListener('resize', this.handleResize);
@@ -62,7 +63,7 @@ class WatchLive extends Component {
 
             Swal.fire('Erro', 'Um erro inesperado ocorreu enquanto abríamos a live, tente novamente mais tarde', 'error')
         })
-
+        console.log(response)
         this.setState({
             live: response.data.live
         })
@@ -128,8 +129,11 @@ class WatchLive extends Component {
             }
         }).finally(() => {
             var { messages } = this.state
-            const ids = messages.map(({data}) => data.research.id.toString())
-            console.log(ids)
+            console.log(messages)
+            const idsPa = messages.map(({data}) => data.type === "participation_accepted" ? data.id.toString() : null)
+            const idsRk = messages.map(({data}) => data.type === "new_research" ? data.research.id.toString() : null)
+            console.log(idsRk)
+            console.log(idsPa)
             onValue(ref(db, `/lives/${response.data.live.id}/researches`), (snapshot) => {
 
                 const data = snapshot.val();
@@ -138,10 +142,8 @@ class WatchLive extends Component {
                 if(!rks) return
                 // if(!messages.length) return
 
-                console.log(rks)
-
                 for(const rk of rks) {
-                    if (ids.includes(rk)) {
+                    if (idsRk.includes(rk)) {
                         continue    
                     }
                     console.log(data[rk])
@@ -157,7 +159,25 @@ class WatchLive extends Component {
                 this.setState({
                     messages: messages
                 })
-                
+            });
+
+            onValue(ref(db, `/lives/${response.data.live.id}/invitation/${userId}`), (snapshot) => {
+                const data = snapshot.val();
+                var pas = data;
+                if(!pas) return
+                console.log(pas)
+                console.log(idsPa)
+                if (idsPa.length === 0) {
+                    if (pas.link) {
+                        messages.push({
+                            type: "participation_accepted",
+                            data: pas
+                        })
+                    }
+                }
+                this.setState({
+                    messages: messages
+                })
             });
         })
 
