@@ -89,6 +89,7 @@ class Research extends Component {
                                             <ResearchesListComponent
                                                 researches={this.state.researches}
                                                 updateStateResearch={ (newState) => { this.setState({ researches: newState }) } }
+                                                liveId={this.state.selectedEvent}
                                             />
                                         </CardBasic>
                                     </div>

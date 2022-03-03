@@ -60,10 +60,12 @@ class ResearchesListComponent extends Component {
             confirmButtonText: 'Sim, alterar'
         }).then((result) => {
             if (result.isConfirmed) {
+                var { liveId } = this.props
                 axios.put('/admin/research', {
                     id: researchId,
                     status: status,
-                    is_finished: isFinished
+                    is_finished: isFinished,
+                    live_id: liveId
                 }).then(() => {
                     var { researches } = this.props
         
