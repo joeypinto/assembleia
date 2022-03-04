@@ -58,19 +58,19 @@ class Research extends Component {
         {
             name: 'Visualizar',
             cell: (row) => {
-                return <button className="btn btn-primary" onClick={() => this.handleDetails(row)}>Visualizar</button>
+                return <button className="btn btn-primary btn-size" onClick={() => this.handleDetails(row)}>Visualizar</button>
             }
         },
         {
             name: 'Editar',
             cell: (row) => {
-                return <button className="btn btn-primary" onClick={() => this.handleUpdateRedirect(row.id)}>Editar</button>
+                return <button className="btn btn-primary btn-size" onClick={() => this.handleUpdateRedirect(row.id)}>Editar</button>
             }
         },
         {
             name: 'Deletar',
             cell: (row) => {
-                return <button className="btn btn-primary" onClick={() => this.handleDelete(row)}>Deletar</button>
+                return <button className="btn btn-danger btn-size" onClick={() => this.handleDelete(row)}>Deletar</button>
             }
         }
     ]
@@ -165,11 +165,13 @@ class Research extends Component {
                                     <div className="col-xl-12">
                                         <CardBasic title="Listagem de Usuários">
                                             <button onClick={() => this.redirectToNew()} className="btn btn-success">Adicionar Usuário</button>
-                                            <DataTable
-                                                columns={this.columns}
-                                                data={users}
-                                                pagination
-                                            />
+                                            <div class="table-content">
+                                                <DataTable
+                                                    columns={this.columns}
+                                                    data={users}
+                                                    pagination
+                                                />
+                                            </div>
                                         </CardBasic>
                                     </div>
                                 </div>

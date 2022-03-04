@@ -50,3 +50,11 @@
     }
   }
 }
+
+@media(max-width: 1230px) {
+  .table-content .btn-size {
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+}
