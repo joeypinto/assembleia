@@ -16,6 +16,19 @@ import convertUTCDateTimeToBrazilianDateTime from '../../../services/converter'
 
 import Swal from 'sweetalert2'
 
+// import firebaseApp from services/firebase";
+
+import {
+    getDatabase,
+    ref,
+    onValue,
+    set,
+    remove,
+    update,
+    push,
+    child,
+  } from "firebase/database";
+
 //todo: trazer lista do server
 class ListLives extends Component {
 
@@ -23,7 +36,8 @@ class ListLives extends Component {
 		super(props)
 
 		this.state = {
-			lives: []
+			lives: [],
+			button: false
 		}
 	}
 
@@ -35,6 +49,17 @@ class ListLives extends Component {
 				lives: response.data.lives
 			})
 		})
+
+		const db = getDatabase();
+
+        onValue(ref(db, `/lives/${this.props.live.id}/button/`), (snapshot) => {
+            const data = snapshot.val();
+            console.log(data, "datadata")
+
+            this.setState({
+                button: data
+            })
+        });
 	}
 
     redirectToNew = () => {
@@ -47,6 +72,13 @@ class ListLives extends Component {
 
 	handleDetails(id) {
 		this.props.history.push(`/eventos/${id}`)
+	}
+
+	handleStatus(id) {
+		const db = getDatabase();
+
+		ref(db, `/lives/${id}/button/`)
+		set(ref(db, `/lives/${id}/button/`), !this.state.button);
 	}
 
 	renderRows() { 
@@ -87,6 +119,17 @@ class ListLives extends Component {
 								Desativar
 							</button>
 						</td>
+						<td>
+							{
+								this.state.button ? 
+								<button className="btn btn-danger" onClick={() => this.handleStatus(live.id)}>
+									Liberar
+								</button> : 
+								<button className="btn btn-danger" onClick={() => this.handleStatus(live.id)}>
+									Bloquear
+								</button>
+							}
+						</td>
 					</tr>
 				)
 			})
@@ -122,6 +165,7 @@ class ListLives extends Component {
 															<th>Ver</th>
 															<th>Editar</th>
 															<th>Desativar</th>
+															<th>Ativar enquete</th>
 														</tr>
 													</thead>
 													<tfoot>
@@ -133,6 +177,7 @@ class ListLives extends Component {
 															<th>Ver</th>
 															<th>Editar</th>
 															<th>Desativar</th>
+															<th>Ativar enquete</th>
 														</tr>
 													</tfoot>
 													<tbody>

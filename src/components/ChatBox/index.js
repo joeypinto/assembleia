@@ -6,6 +6,19 @@ import axios from '../../services/axios';
 import convertUTCDateTimeToBrazilianDateTime from '../../services/converter'
 import { insertAnsweredResearchInStorage, isResearchInStorage } from '../../services/research'
 
+import firebaseApp from "../../services/firebase";
+
+import {
+    getDatabase,
+    ref,
+    onValue,
+    set,
+    remove,
+    update,
+    push,
+    child,
+  } from "firebase/database";
+
 
 class ChatBox extends Component {
 
@@ -13,9 +26,24 @@ class ChatBox extends Component {
         super(props)
 
         this.state = {
-            messages: this.props.messages
+            messages: this.props.messages,
+            button: false
         }
     }
+
+    async componentDidMount() {
+        const db = getDatabase();
+
+        onValue(ref(db, `/lives/${this.props.live.id}/button/`), (snapshot) => {
+            const data = snapshot.val();
+            console.log(data, "datadata")
+
+            this.setState({
+                button: data
+            })
+        });
+    }
+
 
     handleRequest = () => {
         Swal.fire({
@@ -257,7 +285,7 @@ class ChatBox extends Component {
                 </button>
             </div>
             <div className="card-body scroll-chat">
-                <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
+                <button disabled={!this.state.button} className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
 
                 <hr/>
                 
