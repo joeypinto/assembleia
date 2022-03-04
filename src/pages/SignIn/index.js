@@ -20,6 +20,8 @@ class SignIn extends Component {
 	}
 
 	handleLogin = () => {
+		this.state.rf = this.state.rf.substring(0,7)
+
 		axios.post("login", { ...this.state }).then(response => {
 			console.log("login response is", response);
 			localStorage.setItem('authenticationToken', response.data.token)
@@ -63,7 +65,7 @@ class SignIn extends Component {
 														type="text"
 														className="form-control form-control-user"
 														id="inputRF"
-														placeholder="RF"
+														placeholder="RF (7 dígitos)"
 														value={rf}
 														onChange={(e) => this.setState({ rf: e.target.value })}
 													/>

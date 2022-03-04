@@ -260,11 +260,6 @@ class ChatBox extends Component {
                 <button className="btn btn-primary btn-block" onClick={() => this.handleRequest()}>Pedir para participar</button>
 
                 <hr/>
-                
-                <div class="received_msg">
-                    <p>Mensagem de teste que será removida em breve</p>
-                    <span>Moderador às { convertUTCDateTimeToBrazilianDateTime("2021-05-03T02:50:13.000Z").split(" ")[1] }</span>
-                </div>
 
                 { this.renderMessages() }
             </div>
