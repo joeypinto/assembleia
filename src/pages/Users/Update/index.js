@@ -153,7 +153,7 @@ class LiveConfiguration extends Component {
                                                 </select>
                                             </div>
 
-                                            <div className="col-md-12">
+                                            <div>
                                                 <button onClick={() => this.props.history.push("/users")}  className="btn btn-default mr-2" type="submit">
                                                     Voltar
                                                 </button>

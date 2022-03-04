@@ -122,8 +122,8 @@ class DetailUser extends Component {
                                                 </select>
                                             </div>
 
-                                            <div className="col-md-12">
-                                                <button onClick={() => this.props.history.push("/users")}  className="btn btn-default mr-2" type="submit">
+                                            <div>
+                                                <button onClick={() => this.props.history.push("/users")}  className="btn btn-default" type="submit">
                                                     Voltar
                                                 </button>
                                             </div>					
