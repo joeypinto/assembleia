@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import User from '../../services/user';
 import { unAuthenticatedAxiosInstance as axios } from './../../services/axios'
+import Swal from 'sweetalert2'
 
 class SignIn extends Component {
 
@@ -32,7 +33,11 @@ class SignIn extends Component {
 			window.location = (redirectRoute)
 			
 		}).catch(err => {
-			console.error("error login", err)
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Erro não localizamos o usuário'
+			})
 		});
 	}
 
