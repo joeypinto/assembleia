@@ -31,18 +31,20 @@ class Research extends Component {
         {
             name: "#",
             selector: "id",
-            sortable: true
+            sortable: true,
+            hide: 1024,
         },
         {
             name: "Nome",
             selector: "name",
-            sortable: true
+            sortable: true,
         },
         {
             name: 'Data e Hora',
             selector: 'created_at',
             sortable: true,
-            cell: (row) => convertUTCDateTimeToBrazilianDateTime(row.created_at)
+            cell: (row) => convertUTCDateTimeToBrazilianDateTime(row.created_at),
+            hide: 1170,
         },
         {
             name: 'Tipo',
@@ -57,18 +59,21 @@ class Research extends Component {
         },
         {
             name: 'Visualizar',
+            compact: true,
             cell: (row) => {
                 return <button className="btn btn-primary btn-size" onClick={() => this.handleDetails(row)}>Visualizar</button>
             }
         },
         {
             name: 'Editar',
+            compact: true,
             cell: (row) => {
                 return <button className="btn btn-primary btn-size" onClick={() => this.handleUpdateRedirect(row.id)}>Editar</button>
             }
         },
         {
             name: 'Deletar',
+            compact: true,
             cell: (row) => {
                 return <button className="btn btn-danger btn-size" onClick={() => this.handleDelete(row)}>Deletar</button>
             }
@@ -192,7 +197,8 @@ class Research extends Component {
                 </div>
                 <a className="scroll-to-top rounded" href="#page-top">
                     <i className="fas fa-angle-up"></i>
-                </a></div>
+                </a>
+            </div>
         )
     }
 }
